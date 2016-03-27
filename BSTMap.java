@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.AbstractMap;
 
 
 /** Binary Search Tree Map implementation with inner Node class.
@@ -17,8 +18,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
     /** Inner node class.  Do not make this static because you want
         the K to be the same K as in the BSTMap header.
     */
-    private class BNode {
-
+    private class BNode extends AbstractMap.SimpleEntry<K, V> {
         /** The key of the entry (null if sentinel node). */
         private K key;
         /** The value of the entry (null if sentinel node). */
@@ -33,6 +33,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
          *  @param v the value for the new node
          */
         BNode(K k, V v) {
+            super(k, v);
             this.key = k;
             this.value = v;
             this.left = null;
@@ -45,18 +46,51 @@ public class BSTMap<K extends Comparable<? super K>, V>
         public boolean isLeaf() {
             return this.key == null;  // this is a sentinel-based implementation
         }
+        /** Simple Entry Methods */
+        @Override
+        public boolean equals(Object o) {
+            //TODO check if this is correct
+            BNode other = null;
+            try {
+                other = (BNode) o;
+            } catch (ClassCastException e) {
+                return false;
+            }
+            return super.equals(o);
+        }
+        @Override
+        public K getKey() {
+            return this.key;
+        }
+        @Override
+        public int hashCode() {
+            return 0;
+        }
+        @Override
+        public V setValue(V val) {
+            V temp = this.value;
+            this.value = val;
+            return temp;
+        }
+        @Override
+        public String toString() {
+            return "Implement toString()!";
+        }
     }
 
     /** The root of this tree. */
     private BNode root;
     /** The number of entries in this map (== non-sentinel nodes). */
     private int size;
+    /** Single leaf sentinal. */
+    private BNode leaf;
 
     /** Create an empty tree with a sentinel root node.
      */
     public BSTMap() {
         // empty tree is a sentinel for the root
         this.root = new BNode(null, null);
+        this.leaf = new BNode(null, null);
         this.size = 0;
     }
 
@@ -67,7 +101,8 @@ public class BSTMap<K extends Comparable<? super K>, V>
 
     @Override()
     public void clear() {
-    // Fill in 
+        this.root = new BNode(null, null);
+        this.size = 0;
     }
 
     @Override()
@@ -77,7 +112,6 @@ public class BSTMap<K extends Comparable<? super K>, V>
 
     @Override()
     public boolean hasKey(K key) {
-    // Fill in
         return this.hasKey(key, this.root);
     }
 
@@ -87,14 +121,24 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return true if found, false otherwise
      */
     public boolean hasKey(K key, BNode curr) {
-    // Fill in
-        return false;
+        if (key == null) {
+            //Throw Error?
+        }
+        if (curr.isLeaf()) {
+            return false;
+        }
+        if (key.compareTo(curr.key) < 0) {
+            return this.hasKey(key, curr.left);
+        } else if (key.compareTo(curr.key) == 0) {
+            return true;
+        } else {
+            return this.hasKey(key, curr.right);
+        }
     }
 
     @Override()
     public boolean hasValue(V value) {
-    // Fill in
-        return false;
+        return false; 
     }
     
     @Override()
@@ -108,8 +152,19 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the value associated with the key, or null if not found
      */
     public V get(K key, BNode curr) {
-    // Fill in
-        return null;
+        if (key == null) {
+            //Throw error
+        }
+        if (curr.isLeaf()) {
+            return null;
+        }
+        if (key.compareTo(curr.key) < 0) {
+            return this.get(key, curr.left);
+        } else if (key.compareTo(curr.key) == 0) {
+            return curr.value;
+        } else {
+            return this.get(key, curr.right);   
+        }
     }
 
     @Override()
@@ -124,7 +179,17 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the original value associated with the key, or null if not found
      */
     private V put(K key, V val, BNode curr) {
-    // Fill in
+        // TODO: check that key, val are not null and throw error otherwise?
+
+        /* If the map has the key, replace the value */
+        if (this.hasKey(key, curr)) {
+            return this.find(key, curr).setValue(val);
+        }
+        /* Otherwise make a new node and put it in the tree */
+        BNode node = new BNode(key, val);
+        node.right = leaf;
+        node.left = leaf;
+        this.insert(node, this.root);
         return null;
     }
 
@@ -139,7 +204,6 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the value associated with the removed key, or null if not found
      */
     public V remove(K key, BNode curr) {
-    // Fill in
         return null;
     }
     
@@ -160,6 +224,52 @@ public class BSTMap<K extends Comparable<? super K>, V>
     // Fill in
         return null;
     }
+    /** Insert a node into a subtree.
+     * @param node the node to insert at
+     * @param curr the node of the current subtree
+     */
+    private void insert(BNode node, BNode curr) {
+        /* If we try to insert on a sentinal, replace the sentinal. */
+        if (curr.isLeaf()) {
+            curr = node;
+            this.size++;
+        }
+        /* Otherwise move right or left and insert*/
+        if (node.key.compareTo(curr.key) <= 0) {
+            /*
+            if (curr.left.isLeaf()) {
+                curr.left = node;
+                this.size++;
+                return;
+            }
+            */
+            this.insert(node, curr.left);
+        } else if (node.key.compareTo(curr.key) > 0) {
+            /*
+            if (curr.right.isLeaf()) {
+                curr.right = node;
+                this.size++;
+            }
+            */
+            this.insert(node, curr.right);
+        }
+    }
+    /** Find and return the node with a key in a subtree, null if not found.
+     * @param key the key to look for
+     * @param curr the root of the subtree we're searching
+     */
+    private BNode find(K key, BNode curr) {
+        if (curr.isLeaf()) {
+            return null;
+        }
+        if (key.compareTo(curr.key) < 0) {
+            return this.find(key, curr.left);
+        } else if (key.compareTo(curr.key) == 0) {
+            return curr;
+        } else {
+            return this.find(key, curr.right);
+        }
+    }
 
     /* -----   BSTMap-specific functions   ----- */
 
@@ -168,8 +278,16 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the min key
      */
     public K firstKey(BNode curr) {
-    // Fill in
-        return null;
+        /* Special case, curr is a sentinal */
+        //TODO: should this throw an error?
+        if (curr.isLeaf()) {
+            return null;
+        }
+        /* If the nodes left child is a sentinal, its the firstKey */
+        if (curr.left.isLeaf()) {
+            return curr.key;
+        }
+        return this.firstKey(curr.left);
     }
 
     /** Get the smallest key in a subtree.
@@ -177,8 +295,16 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the max key
      */
     public K lastKey(BNode curr) {
-    // Fill in
-        return null;
+        /* Special case, curr is a sentinal */
+        //TODO: should this throw an error?
+        if (curr.isLeaf()) {
+            return null;
+        }
+        /* If the nodes right child is a sentinal, its the lastKey */
+        if (curr.right.isLeaf()) {
+            return curr.key;
+        }
+        return this.firstKey(curr.right);
     }
 
     /** Inorder traversal that produces an iterator over key-value pairs.
@@ -194,10 +320,23 @@ public class BSTMap<K extends Comparable<? super K>, V>
      */
     private Collection<Map.Entry<K, V>> inOrder(BNode curr) {
         LinkedList<Map.Entry<K, V>> ordered = new LinkedList<Map.Entry<K, V>>();
-
-    // Fill in
-
+        this.inOrderAddToCollection(curr, ordered);
         return ordered;
+    }
+
+    /** Inorder traversal that also adds the nodes to a collection.
+     *  Do this instead so that you only need to recursively copy
+     *  a reference to the collection rather than the whole thing
+     *  @param curr the current root of the subtree
+     *  @param collection the collection you are adding nodes to
+     */
+    private void inOrderAddToCollection (BNode curr, Collection<Map.Entry<K, V>> collection) {
+        if (curr.isLeaf()) {
+            return;
+        }
+        inOrderAddToCollection(curr.left, collection);
+        collection.add(curr);
+        inOrderAddToCollection(curr.right,collection);
     }
 
     /** Returns a copy of the portion of this map whose keys are in a range.
@@ -206,7 +345,6 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the resulting submap
      */
     public BSTMap<K, V> subMap(K fromKey, K toKey) {
-    // Fill in
         return null;
     }
 
@@ -214,7 +352,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
 
     @Override
     public Iterator<Map.Entry<K, V>> iterator() {
-        return null;
+        return new BSTMapIterator();
     }
 
     @Override
@@ -229,4 +367,25 @@ public class BSTMap<K extends Comparable<? super K>, V>
     }
 
     /* -----  insert the BSTMapIterator inner class here ----- */
+    private class BSTMapIterator implements Iterator<Map.Entry<K, V>> {
+        private LinkedList<BNode> list;
+        private int curr;
+        private boolean canRemove;
+        public BSTMapIterator() {
+            this.list = (LinkedList) BSTMap.this.inOrder();
+            int curr = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+        @Override
+        public Map.Entry<K, V> next() {
+            return null;
+        }
+        @Override
+        public void remove() {
+            return; 
+        }
+    }
 }
