@@ -84,6 +84,8 @@ public class BSTMap<K extends Comparable<? super K>, V>
     private int size;
     /** Single leaf sentinal. */
     private BNode leaf;
+    /** Track if iterator should be invalidated. */
+    private boolean modified;
 
     /** Create an empty tree with a sentinel root node.
      */
@@ -91,6 +93,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
         // empty tree is a sentinel for the root
         this.root = new BNode(null, null);
         this.leaf = new BNode(null, null);
+        this.modified = true;
         this.size = 0;
     }
 
@@ -101,6 +104,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
 
     @Override()
     public void clear() {
+        this.modified = true;
         this.root = new BNode(null, null);
         this.size = 0;
     }
@@ -169,6 +173,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
 
     @Override()
     public V put(K key, V val) {
+        this.modified = true;
         return this.put(key, val, this.root);
     }
 
@@ -179,6 +184,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the original value associated with the key, or null if not found
      */
     private V put(K key, V val, BNode curr) {
+        this.modified = true;
         // TODO: check that key, val are not null and throw error otherwise?
 
         /* If the map has the key, replace the value */
@@ -195,6 +201,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
 
     @Override()
     public V remove(K key) {
+        this.modified = true;
         return this.remove(key, this.root);
     }
 
@@ -204,6 +211,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the value associated with the removed key, or null if not found
      */
     public V remove(K key, BNode curr) {
+        this.modified = true;
         return null;
     }
     
@@ -229,6 +237,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param curr the node of the current subtree
      */
     private void insert(BNode node, BNode curr) {
+        this.modified = true;
         /* If we try to insert on a sentinal, replace the sentinal. */
         if (curr.isLeaf()) {
             curr = node;
@@ -369,22 +378,32 @@ public class BSTMap<K extends Comparable<? super K>, V>
     /* -----  insert the BSTMapIterator inner class here ----- */
     private class BSTMapIterator implements Iterator<Map.Entry<K, V>> {
         private LinkedList<BNode> list;
-        private int curr;
+        private Iterator<BNode> iter;
         private boolean canRemove;
         public BSTMapIterator() {
             this.list = (LinkedList) BSTMap.this.inOrder();
-            int curr = 0;
+            iter = list.iterator();
+            BSTMap.this.modified = false;
         }
         @Override
         public boolean hasNext() {
-            return false;
+            if (BSTMap.this.modified) {
+                throw new ConcurrentModificationException();
+            }
+            return iter.hasNext();
         }
         @Override
         public Map.Entry<K, V> next() {
-            return null;
+            if (BSTMap.this.modified) {
+                throw new ConcurrentModificationException();
+            }
+            return iter.next();
         }
         @Override
         public void remove() {
+            if (BSTMap.this.modified) {
+                throw new ConcurrentModificationException();
+            }
             return; 
         }
     }
