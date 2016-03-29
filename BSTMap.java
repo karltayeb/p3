@@ -20,15 +20,15 @@ public class BSTMap<K extends Comparable<? super K>, V>
     /** Inner node class.  Do not make this static because you want
         the K to be the same K as in the BSTMap header.
     */
-    private class BNode<K, V> extends AbstractMap.SimpleEntry<K, V> {
+    private class BNode extends AbstractMap.SimpleEntry<K, V> {
         /** The key of the entry (null if sentinel node). */
         private K key;
         /** The value of the entry (null if sentinel node). */
         private V value;
         /** The left child of this node. */
-        private BNode<K, V> left;
+        private BNode left;
         /** The right child of this node. */
-        private BNode<K, V> right;
+        private BNode right;
 
         /** Create a new node with a particular key and value.
          *  @param k the key for the new node
@@ -52,9 +52,9 @@ public class BSTMap<K extends Comparable<? super K>, V>
         @Override
         public boolean equals(Object o) {
             //TODO check if this is correct
-            BNode<K, V> other = null;
+            BNode other = null;
             try {
-                other = (BNode<K, V>) o;
+                other = (BNode) o;
             } catch (ClassCastException e) {
                 return false;
             }
@@ -85,11 +85,11 @@ public class BSTMap<K extends Comparable<? super K>, V>
     }
 
     /** The root of this tree. */
-    private BNode<K, V> root;
+    private BNode root;
     /** The number of entries in this map (== non-sentinel nodes). */
     private int size;
     /** Single leaf sentinal. */
-    private final BNode<K, V> leaf;
+    private final BNode leaf;
     /** Track if iterator should be invalidated. */
     private boolean modified;
 
@@ -97,8 +97,8 @@ public class BSTMap<K extends Comparable<? super K>, V>
      */
     public BSTMap() {
         // empty tree is a sentinel for the root
-        this.root = new BNode<K, V>(null, null);
-        this.leaf = new BNode<K, V>(null, null);
+        this.root = new BNode(null, null);
+        this.leaf = new BNode(null, null);
         this.modified = true;
         this.size = 0;
     }
@@ -111,7 +111,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
     @Override()
     public void clear() {
         this.modified = true;
-        this.root = new BNode<K, V>(null, null);
+        this.root = new BNode(null, null);
         this.size = 0;
     }
 
@@ -130,7 +130,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree being searched
      *  @return true if found, false otherwise
      */
-    public boolean hasKey(K key, BNode<K, V> curr) {
+    public boolean hasKey(K key, BNode curr) {
         if (key == null) {
             //Throw Error?
         }
@@ -161,7 +161,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree from which to get the entry
      *  @return the value associated with the key, or null if not found
      */
-    public V get(K key, BNode<K, V> curr) {
+    public V get(K key, BNode curr) {
         if (key == null) {
             //Throw error
         }
@@ -189,7 +189,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree into which to put the entry
      *  @return the original value associated with the key, or null if not found
      */
-    private V put(K key, V val, BNode<K, V> curr) {
+    private V put(K key, V val, BNode curr) {
         this.modified = true;
         // TODO: check that key, val are not null and throw error otherwise?
 
@@ -200,7 +200,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
         }
         */
         /* Otherwise make a new node and put it in the tree */
-        BNode<K, V> node = new BNode<K, V>(key, val);
+        BNode node = new BNode(key, val);
         node.right = this.leaf;
         node.left = this.leaf;
         this.insert(node, this.root);
@@ -210,7 +210,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param node the node to insert at
      * @param curr the node of the current subtree
      */
-    private void insert(BNode<K, V> node, BNode<K, V> curr) {
+    private void insert(BNode node, BNode curr) {
         this.modified = true;
         /* If we try to insert on a sentinal, replace the sentinal. */
         if (curr.isLeaf()) {
@@ -240,7 +240,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param key the key to look for
      * @param curr the root of the subtree we're searching
      */
-    private BNode<K, V> find(K key, BNode<K, V> curr) {
+    private BNode find(K key, BNode curr) {
         if (curr.isLeaf()) {
             return null;
         }
@@ -263,7 +263,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree from which to remove the entry
      *  @return the value associated with the removed key, or null if not found
      */
-    public V remove(K key, BNode<K, V> curr) {
+    public V remove(K key, BNode curr) {
         if (key == null) {
             //throw error
         }
@@ -280,7 +280,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param curr the root of the subtree from which to remove the entry
      * @return the node associated with the removed key, or null if not found
      */
-    private BNode<K, V> removeroutine(K key, BNode<K, V> curr) {
+    private BNode removeroutine(K key, BNode curr) {
         if (key == null) {
             //Return error?
         }
@@ -300,10 +300,10 @@ public class BSTMap<K extends Comparable<? super K>, V>
             } else {
                 /* Case where there are two children, we need to find
                  * the greatest key smaller than what we are deleting */
-                BNode<K, V> node = this.find(this.lastKey(curr.left), curr.left);
+                BNode max = this.find(this.lastKey(curr.left), curr.left);
                 /* Replace deleted value with biggest value smaller than it*/
-                curr.key = node.key;
-                curr.value = node.value;
+                curr.key = max.key;
+                curr.value = max.value;
                 /* Delete the biggest value smaller from it from
                  * the left subtree. By being the biggest value of
                  * this subtree it necessarily doesn't have two children
@@ -311,7 +311,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
                 this.removemax(curr.left);
             }
         }
-        return this.leaf;
+        return curr;
     }
     
     //FOR TESTING ONLY, REMOVE WHEN DONE
@@ -319,10 +319,10 @@ public class BSTMap<K extends Comparable<? super K>, V>
         this.removemax(this.root);
     }
 
-    private BNode<K, V> removemax(BNode<K, V> curr) {
+    private BNode removemax(BNode curr) {
         /* Special case where max is root node */
         if (curr == this.root && this.root.right.isLeaf()) {
-            BNode<K, V> temp = this.root;
+            BNode temp = this.root;
             this.root = this.root.left;
             return temp;            
         }
@@ -358,7 +358,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree to search
      *  @return the min key
      */
-    public K firstKey(BNode<K, V> curr) {
+    public K firstKey(BNode curr) {
         /* Special case, curr is a sentinal */
         //TODO: should this throw an error?
         if (curr.isLeaf()) {
@@ -379,7 +379,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree to search
      *  @return the max key
      */
-    public K lastKey(BNode<K, V> curr) {
+    public K lastKey(BNode curr) {
         /* Special case, curr is a sentinal */
         //TODO: should this throw an error?
         if (curr.isLeaf()) {
@@ -407,7 +407,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree to iterate over
      *  @return an iterable list of entries ordered by keys
      */
-    private Collection<Map.Entry<K, V>> inOrder(BNode<K, V> curr) {
+    private Collection<Map.Entry<K, V>> inOrder(BNode curr) {
         LinkedList<Map.Entry<K, V>> ordered = new LinkedList<Map.Entry<K, V>>();
         this.inOrderAddToCollection(curr, ordered);
         return ordered;
@@ -419,7 +419,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the current root of the subtree
      *  @param collection the collection you are adding nodes to
      */
-    private void inOrderAddToCollection (BNode<K, V> curr, Collection<Map.Entry<K, V>> collection) {
+    private void inOrderAddToCollection (BNode curr, Collection<Map.Entry<K, V>> collection) {
         if (curr.isLeaf()) {
             return;
         }
@@ -443,7 +443,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
         String out = "[";
         LinkedList<Map.Entry<K, V>> ordered = (LinkedList<Map.Entry<K, V>>) this.inOrder(this.root);
         for (Map.Entry<K, V> entry : ordered) {
-            BNode <K, V> node = (BNode <K, V>) entry;
+            BNode node = (BNode) entry;
             out += node.toString();
             out += ", ";
         }
