@@ -212,7 +212,9 @@ public class BSTMap<K extends Comparable<? super K>, V>
      */
     private void insert(BNode node, BNode curr) {
         this.modified = true;
-        /* If we try to insert on a sentinal, replace the sentinal. */
+        /* If we try to insert on a sentinal, replace the sentinal.
+         * since we inspect left and right children, this only happens when
+         * inserting at the root of the tree. */
         if (curr.isLeaf()) {
             this.root = node;
             this.size++;
@@ -242,7 +244,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      */
     private BNode find(K key, BNode curr) {
         if (curr.isLeaf()) {
-            return null;
+            return this.leaf;
         }
         if (key.compareTo(curr.key) < 0) {
             return this.find(key, curr.left);
@@ -282,33 +284,34 @@ public class BSTMap<K extends Comparable<? super K>, V>
      */
     private BNode removeroutine(K key, BNode curr) {
         if (key == null) {
-            //Return error?
-        }
-        if (curr.isLeaf()) {
-            return this.leaf;
+            //error?
         }
         if (key.compareTo(curr.key) < 0) {
-            curr.left = this.removeroutine(key, curr.left); 
+            curr.left = this.removeroutine(key, curr.left);
         } else if (key.compareTo(curr.key) > 0) {
-            curr.right = this.removeroutine(key, curr.left);
+            curr.right = this.removeroutine(key, curr.right);
         } else {
-            /*Now we have found the node we want to delete (or its not here)*/
-            if (curr.left.isLeaf()) {
-                return curr.right;
-            } else if (curr.right.isLeaf()) {
+            // We found the node we want to delete
+            if (curr == this.root) { //Catch-all special case for when root is being deleted
+                    BNode newroot = this.find(this.lastKey(this.root.left), this.root.left);
+                    this.root.key = newroot.key;
+                    this.root.value = newroot.value;
+                    this.root.left = this.removeroutine(newroot.key, this.root.left);
+                    return this.root;
+            } else if (curr.right.equals(this.leaf) && curr.left.equals(this.leaf)) {
+                //Has no children, set this node to leaf
+                return this.leaf;
+            } else if (curr.right.equals(this.leaf)) {
                 return curr.left;
+            } else if (curr.left.equals(this.leaf)) {
+                return curr.right;
             } else {
-                /* Case where there are two children, we need to find
-                 * the greatest key smaller than what we are deleting */
+                //There are two children
                 BNode max = this.find(this.lastKey(curr.left), curr.left);
-                /* Replace deleted value with biggest value smaller than it*/
                 curr.key = max.key;
                 curr.value = max.value;
-                /* Delete the biggest value smaller from it from
-                 * the left subtree. By being the biggest value of
-                 * this subtree it necessarily doesn't have two children
-                 * thus we are guarunteed not to have infinite recursion */
-                this.removemax(curr.left);
+                curr.left = this.removeroutine(max.key, curr.left);
+                return curr;
             }
         }
         return curr;
@@ -318,14 +321,12 @@ public class BSTMap<K extends Comparable<? super K>, V>
     public void removemax() {
         this.removemax(this.root);
     }
+    //FOR TESTING ONLY, REMOVE WHEN DONE
+    public V getRoot() {
+        return this.root.value;
+    }
 
     private BNode removemax(BNode curr) {
-        /* Special case where max is root node */
-        if (curr == this.root && this.root.right.isLeaf()) {
-            BNode temp = this.root;
-            this.root = this.root.left;
-            return temp;            
-        }
         if (curr.right.isLeaf()) {
             return curr.left;
         }
