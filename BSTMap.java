@@ -286,6 +286,9 @@ public class BSTMap<K extends Comparable<? super K>, V>
         if (key == null) {
             //error?
         }
+        if (curr.isLeaf()) {
+            return this.leaf;
+        }
         if (key.compareTo(curr.key) < 0) {
             curr.left = this.removeroutine(key, curr.left);
         } else if (key.compareTo(curr.key) > 0) {
@@ -294,6 +297,13 @@ public class BSTMap<K extends Comparable<? super K>, V>
             // We found the node we want to delete
             if (curr == this.root) { //Catch-all special case for when root is being deleted
                     BNode newroot = this.find(this.lastKey(this.root.left), this.root.left);
+                    if (newroot.isLeaf()) {
+                        newroot = this.find(this.firstKey(this.root.right), this.root.right);
+                        this.root.key = newroot.key;
+                        this.root.value = newroot.value;
+                        this.root.right = this.removeroutine(newroot.key, this.root.right);
+                        return this.root;
+                    }
                     this.root.key = newroot.key;
                     this.root.value = newroot.value;
                     this.root.left = this.removeroutine(newroot.key, this.root.left);
@@ -307,10 +317,10 @@ public class BSTMap<K extends Comparable<? super K>, V>
                 return curr.right;
             } else {
                 //There are two children
-                BNode max = this.find(this.lastKey(curr.left), curr.left);
-                curr.key = max.key;
-                curr.value = max.value;
-                curr.left = this.removeroutine(max.key, curr.left);
+                BNode replace = this.find(this.lastKey(curr.left), curr.left);
+                curr.key = replace.key;
+                curr.value = replace.value;
+                curr.left = this.removeroutine(replace.key, curr.left);
                 return curr;
             }
         }
@@ -331,6 +341,14 @@ public class BSTMap<K extends Comparable<? super K>, V>
             return curr.left;
         }
         curr.right = this.removemax(curr.right);
+        return curr;
+    }
+
+    private BNode removemin(BNode curr) {
+        if (curr.left.isLeaf()) {
+            return curr.right;
+        }
+        curr.right = this.removemin(curr.left);
         return curr;
     }
     
