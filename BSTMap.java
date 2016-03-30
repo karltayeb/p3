@@ -312,17 +312,17 @@ public class BSTMap<K extends Comparable<? super K>, V>
         } else {
             // We found the node we want to delete
             if (curr == this.root) { //Catch-all special case for when root is being deleted
-                    BNode newroot = this.find(this.lastKey(this.root.left), this.root.left);
+                    BNode newroot = this.find(this.firstKey(this.root.right), this.root.right);
                     if (newroot.isLeaf()) {
-                        newroot = this.find(this.firstKey(this.root.right), this.root.right);
+                        newroot = this.find(this.lastKey(this.root.left), this.root.left);
                         this.root.key = newroot.key;
                         this.root.value = newroot.value;
-                        this.root.right = this.removeroutine(newroot.key, this.root.right);
+                        this.root.left = this.removeroutine(newroot.key, this.root.left);
                         return this.root;
                     }
                     this.root.key = newroot.key;
                     this.root.value = newroot.value;
-                    this.root.left = this.removeroutine(newroot.key, this.root.left);
+                    this.root.right = this.removeroutine(newroot.key, this.root.right);
                     return this.root;
             } else if (curr.right.equals(this.leaf) && curr.left.equals(this.leaf)) {
                 //Has no children, set this node to leaf
@@ -333,10 +333,10 @@ public class BSTMap<K extends Comparable<? super K>, V>
                 return curr.right;
             } else {
                 //There are two children
-                BNode replace = this.find(this.lastKey(curr.left), curr.left);
+                BNode replace = this.find(this.firstKey(curr.right), curr.right);
                 curr.key = replace.key;
                 curr.value = replace.value;
-                curr.left = this.removeroutine(replace.key, curr.left);
+                curr.right = this.removeroutine(replace.key, curr.right);
                 return curr;
             }
         }
@@ -477,10 +477,10 @@ public class BSTMap<K extends Comparable<? super K>, V>
             return submap;
         }
         // adjust bounds of submap
-        if (fromKey.compareTo(firstKey) < 0) {
+        if (firstKey != null && fromKey.compareTo(firstKey) < 0) {
             fromKey = firstKey;
         }
-        if (toKey.compareTo(lastKey) > 0) {
+        if (lastKey != null && toKey.compareTo(lastKey) > 0) {
             toKey = lastKey;
         }
         this.addToSubmap(submap, this.root, fromKey, toKey);
@@ -488,13 +488,19 @@ public class BSTMap<K extends Comparable<? super K>, V>
     }
     
     private void addToSubmap(BSTMap<K, V> map, BNode curr, K low, K high) {
-        if (curr.equals(this.leaf)) {
+        if (curr.key == null) {
             return;
         }
         if (curr.key.compareTo(low) >= 0 && curr.key.compareTo(high) <= 0) {
             map.put(curr.key, curr.value);
             this.addToSubmap(map, curr.left, low, high);
             this.addToSubmap(map, curr.right, low, high);
+        }
+        if (curr.key.compareTo(low) < 0) {
+            this.addToSubmap(map, curr.right, low, high);
+        }
+        if (curr.key.compareTo(high) > 0) {
+            this.addToSubmap(map, curr.left, low, high);
         }
     }
 
