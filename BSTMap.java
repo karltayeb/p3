@@ -155,7 +155,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
         if (value == null) {
             return false;
         }
-        if (curr.equals(this.leaf)) {
+        if (curr.isLeaf()) {
             return false;
         }
         if (curr.value.equals(value)) {
@@ -324,12 +324,12 @@ public class BSTMap<K extends Comparable<? super K>, V>
                     this.root.value = newroot.value;
                     this.root.right = this.removeroutine(newroot.key, this.root.right);
                     return this.root;
-            } else if (curr.right.equals(this.leaf) && curr.left.equals(this.leaf)) {
+            } else if (curr.right.isLeaf() && curr.left.equals(this.leaf)) {
                 //Has no children, set this node to leaf
                 return this.leaf;
-            } else if (curr.right.equals(this.leaf)) {
+            } else if (curr.right.isLeaf()) {
                 return curr.left;
-            } else if (curr.left.equals(this.leaf)) {
+            } else if (curr.left.isLeaf()) {
                 return curr.right;
             } else {
                 //There are two children
@@ -473,7 +473,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
         K firstKey = this.firstKey(this.root);
         K lastKey = this.lastKey(this.root);
         // return an empty map if underlying map is empty
-        if (this.root.equals(this.leaf)) {
+        if (this.root.isLeaf()) {
             return submap;
         }
         // adjust bounds of submap
