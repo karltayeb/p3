@@ -1,7 +1,9 @@
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -281,8 +283,9 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the value associated with the removed key, or null if not found
      */
     public V remove(K key, BNode curr) {
+	this.modified = true;
         if (key == null) {
-            //throw error
+            return null;
         }
         V temp = this.get(key);
         if (temp != null) {
@@ -342,15 +345,6 @@ public class BSTMap<K extends Comparable<? super K>, V>
         return curr;
     }
     
-    //FOR TESTING ONLY, REMOVE WHEN DONE
-    public void removemax() {
-        this.removemax(this.root);
-    }
-    //FOR TESTING ONLY, REMOVE WHEN DONE
-    public V getRoot() {
-        return this.root.value;
-    }
-
     private BNode removemax(BNode curr) {
         if (curr.right.isLeaf()) {
             return curr.left;
@@ -369,20 +363,29 @@ public class BSTMap<K extends Comparable<? super K>, V>
     
     @Override()
     public Set<Map.Entry<K, V>> entries() {
-    // Fill in
-        return null;
+        HashSet<Map.Entry<K, V>> entrySet = new HashSet<Map.Entry<K, V>>(this.size());
+        this.inOrderAddToCollection(this.root, entrySet);
+        return entrySet;        
     }
 
     @Override()
     public Set<K> keys() {
-    //Fill in
-        return null;
+        HashSet<Map.Entry<K, V>> entrySet = (HashSet<Map.Entry<K, V>>) this.entries();
+        HashSet<K> keySet = new HashSet(entrySet.size());
+        for (Map.Entry<K, V> entry : entrySet) {
+            keySet.add(entry.getKey());
+        }
+        return keySet;
     }
 
     @Override()
     public Collection<V> values() {
-    // Fill in
-        return null;
+        LinkedList<V> valueList = new LinkedList<V>();
+        HashSet<Entry<K, V>> entrySet = (HashSet<Entry<K, V>>) this.entries();
+        for (Map.Entry<K, V> entry : entrySet) {
+            valueList.add(entry.getValue());
+        }
+        return valueList;
     }
 
 
