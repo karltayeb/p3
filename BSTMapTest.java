@@ -5,8 +5,8 @@
  *  Explicit test for clear, probe functions
  *  Explicit test that put of existing key replaces value, no key changes
  *  Explicit test remove all, remove duplicate values - contents and metrics
- *  Explicit tests of tombstones:
- *    get/insert/probing after remove with tombstones
+ *  Explicit tests of s:
+ *    get/insert/probing after remove with s
  *    rehashing when ghosts > size
  * 
  *  Explicit tests of iterator functions
@@ -140,10 +140,6 @@ public class BSTMapTest {
         BSTMap<Integer,String> em = new LPHashMap<Integer,String>(lf);
         assertTrue(em.isEmpty());
         assertEquals(0, em.size());
-        assertEquals(5, em.getCapacity());
-        // may need fudge factor for floats because of potential precision errors
-        assertTrue(em.getLoad()==0);
-        assertTrue(em.getMaxLoad()==lf);  
     }
 
     @Test
@@ -152,9 +148,6 @@ public class BSTMapTest {
         e7.clear();
         assertTrue(e7.isEmpty());
         assertEquals(0, e7.size());
-        assertTrue(.7f == e7.getMaxLoad());
-        assertTrue(0 == e7.getLoad());
-        assertEquals(5, e7.getCapacity());  
         assertTrue(e7.keys().isEmpty());
         assertTrue(e7.values().isEmpty());
         assertTrue(e7.entries().isEmpty());
@@ -172,16 +165,10 @@ public class BSTMapTest {
             e7.put(iray[i],sray[i]);
         }
         int size = e7.size();
-        int cap = e7.getCapacity();
         assertTrue(size == iray.length);
-        assertTrue(e7.getLoad() == (float) size / cap);
-        assertTrue(e7.getMaxLoad() == .7f);
         e7.clear();
         assertTrue(e7.isEmpty());
         assertEquals(0, e7.size());
-        assertTrue(.7f == e7.getMaxLoad());
-        assertTrue(0 == e7.getLoad());
-        assertEquals(cap, e7.getCapacity());  // don't resize or reshash
         assertTrue(e7.keys().isEmpty());
         assertTrue(e7.values().isEmpty());
         assertTrue(e7.entries().isEmpty());
@@ -190,18 +177,6 @@ public class BSTMapTest {
             assertFalse(e7.hasKey(iray[i]));
             assertFalse(e7.hasValue(sray[i]));
         }
-    }
-
-    @Test
-    public void testGetMaxLoad() {
-        assertTrue(.4f == e4.getMaxLoad());
-        assertTrue(.7f == e7.getMaxLoad());
-        e4.put(20,"twenty");
-        e4.put(30,"thirty");
-        e7.put(20,"twenty");
-        e7.put(30,"thirty");
-        assertTrue(.4f == e4.getMaxLoad());
-        assertTrue(.7f == e7.getMaxLoad());
     }
 
     @Test
@@ -280,51 +255,17 @@ public class BSTMapTest {
         }
     }
 
-    /*
-    @Test
-    public void testEqualsHashcode() {
-        e7 = new BSTMap<Integer, String>(.4f);   // same max as e4
-        for (int i=0; i < iray.length; i++) {
-            e4.put(iray[i],sray[i]);
-            e7.put(iray[i],sray[i]);
-            assertTrue(e4.equals(e7));
-            assertEquals(e7.hashCode(), e4.hashCode());
-        }
-        for (int i=0; i < iray.length; i++) {
-            assertEquals(e4.remove(iray[i]),e7.remove(iray[i]));
-            assertTrue(e4.equals(e7));
-            assertTrue(e7.hashCode() == e4.hashCode());
-        }
-    }
-    */
-
     @Test
     public void testMetricsFewAdds() {  // assuming put works
         int size = 0;
-        int cap = 5;
-        float max = .4f;    // .4 * 5 means 2 elements before full
         assertEquals(size, e4.size());
-        assertEquals(cap, e4.getCapacity());
-        assertTrue(max == e4.getMaxLoad());  
-        assertTrue(e4.getLoad() == (float) size / cap);
-        assertTrue(e4.getLoad() <= e4.getMaxLoad());
-
         e4.put(20,"twenty");  // 1st insert
         size++;
         assertEquals(size, e4.size());
-        assertEquals(cap, e4.getCapacity());
-        assertTrue(max == e4.getMaxLoad());  
-        assertTrue(e4.getLoad() == (float) size / cap);
-        assertTrue(e4.getLoad() <= e4.getMaxLoad());
         
         e4.put(30,"thirty");  // 2nd insert
         size++;
         assertEquals(size, e4.size());
-        assertEquals(cap, e4.getCapacity());
-        assertTrue(max == e4.getMaxLoad());  
-        assertTrue(e4.getLoad() == (float) size / cap);
-        assertTrue(e4.getLoad() <= e4.getMaxLoad());
-
         // next insert triggers rehash
         // new capacity must be odd
         // new load must be <= maxload / 2
@@ -333,44 +274,8 @@ public class BSTMapTest {
         e4.put(40,"fourty");
         size++;  // 3 elements, 3/5 > .4, must rehash
         assertEquals(size, e4.size());
-        assertTrue(max == e4.getMaxLoad());
-        // new capacity puts original 2 elements at or below .2 load
-        // new capacity must be >= 2 / .2 = 10
-        cap = e4.getCapacity();
-        assertTrue("load factor rule after rehash new cap is "+cap, (size-1) * 2.0 / max <= cap);  // load factors rule
-        assertTrue(cap % 2 == 1);  // must be odd
-        assertTrue(e4.getLoad() == (float) size / cap);
-        assertTrue(e4.getLoad() <= e4.getMaxLoad());
     }
 
-    public int addEntriesRehashTest(BSTMap<Integer, String> hm, int offset, int size) {
-        int oldcap, newcap;
-        boolean full = false;
-        float max = hm.getMaxLoad();
-        oldcap = hm.getCapacity();
-        for (int i=0; i < iray.length; i++) {
-            hm.put(iray[i] + offset,sray[i]);
-            size++; 
-            assertEquals(size, hm.size());
-            newcap = hm.getCapacity();
-            if (full) {
-                // rehash was triggered before this put
-                assertTrue(newcap >= 2 * oldcap);
-                assertTrue((size-1) * 2.0 / max <= newcap);  // load factors rule
-                full = false;
-            }
-            if ((size+1.0) / newcap > max) {
-                full = true;  // next one causes rehash
-            }
-            assertTrue(newcap % 2 == 1);  // must be odd
-            assertTrue(hm.getLoad() == (float) size / newcap);
-            assertTrue(hm.getLoad() <= hm.getMaxLoad());
-            assertTrue(max == hm.getMaxLoad());
-            oldcap = newcap;
-        }
-        return size;
-    }
-                           
     @Test
     public void testMetricsPutRehash() {
         // now test putting 30 things into maxload .7 hashmap
@@ -386,11 +291,7 @@ public class BSTMapTest {
             // replaces values instead
             // size doesn't change
             assertEquals(size, e7.size());
-            cap = e7.getCapacity();
             assertTrue(cap % 2 == 1);  // must be odd
-            assertTrue(e7.getLoad() == (float) size / cap);
-            assertTrue(e7.getLoad() <= e7.getMaxLoad());
-            assertTrue(max == e7.getMaxLoad());
         }
     }
 
@@ -409,7 +310,6 @@ public class BSTMapTest {
     @Test
     public void testRemoveAll() {
         int size = all.size();
-        int cap = all.getCapacity();
         Set<Integer> keys = all.keys();
         Collection<String> vals = all.values();
         for (int i=0; i < iray.length; i++) {
@@ -429,9 +329,6 @@ public class BSTMapTest {
         assertTrue(all.values().isEmpty());
         assertTrue(all.entries().isEmpty());
         assertEquals(0, all.size());
-        assertEquals(cap, all.getCapacity());  // don't resize even if rehash
-        assertTrue(.5f == all.getMaxLoad());
-        assertTrue(0 == all.getLoad());
     }
 
     @Test
@@ -441,18 +338,12 @@ public class BSTMapTest {
         }
         int size = all.size();
         assertTrue(size == iray.length*2);
-        int cap = all.getCapacity();
-        int ghosts = 0;
-        assertEquals(0, all.ghosts());  // no tombstones yet
         Set<Integer> keys = all.keys();
         Collection<String> vals = all.values();  // has duplicates
         for (int i=0; i < iray.length; i++) {
             assertEquals(all.remove(iray[i]), sray[i]); // returns val
             size--;
-            ghosts++;
             assertEquals(size, all.size());  // size decrease
-            assertEquals(ghosts, all.ghosts());  // ghost increase
-            assertTrue(all.size() >= all.ghosts());  // more active than inactive
             assertNull(all.get(iray[i]));  // key not there now
             assertFalse(all.hasKey(iray[i]));  // key gone
             assertTrue(all.hasValue(sray[i]));  // val still there
@@ -462,11 +353,7 @@ public class BSTMapTest {
             assertEquals(keys, all.keys());
             assertTrue(sameCollection(vals, all.values()));
         }
-        assertEquals(cap, all.getCapacity());  // don't resize even if rehash
-        assertTrue(.5f == all.getMaxLoad());   // never changes
         assertTrue(all.size() == iray.length); // half the values there
-        assertTrue(all.size() == all.ghosts()); // removed half
-        assertTrue(all.getLoad() == (float) all.size() / cap);
         for (int i=0; i < iray.length; i++) {
             assertEquals(all.get(iray[i]+20),sray[i]); 
         }
@@ -535,16 +422,11 @@ public class BSTMapTest {
         assertEquals(0, full.entries().size());
         assertEquals(0, full.keys().size());
         assertEquals(0, full.values().size());
-        // 5 entries removed, should all be tombstones
+        // 5 entries removed, should all be s
         // we don't rehash when removing through iterator
         it = full.iterator();
         count = 0;
         LPMapEntry<Integer, String> e;
-        while (it.hasNext()) {
-            e = it.next();
-            assertTrue(e.isTombstone());
-            count++;
-        }
         assertEquals(cap, count);
     }
 
@@ -578,7 +460,7 @@ public class BSTMapTest {
             }
             if (count % 3 == 0) {  // only remove 1/3 of the entries, no rehash
                 if (e != null) {
-                    pairs.remove(e);  // before becomes tombstone
+                    pairs.remove(e);  // before becomes 
                 }
                 it.remove();  // ignore remove on empty slots
                 if (e != null) {
@@ -643,185 +525,4 @@ public class BSTMapTest {
         assertTrue(sameCollection(vals, e7.values()));
         assertEquals(pairs, e7.entries());
     }
-
-
-    @Test
-    public void testLinearProbeInsertGetContains() {
-        // start with load factor = 1 to fill 5 slot table
-        // force collisions as you put values in
-        // toString tests only work if the values collection is created
-        // using a linear search through the hash table pairs, add to end
-        LPMapEntry<Integer,String>[] table = new LPMapEntry[5];
-        e7 = new BSTMap<Integer, String>(1.0f);   // load 5 of 5 is max
-        e7.put(0, "0");   // slot 0
-        table[0] = new LPMapEntry<Integer,String>(0, "0");
-        // assertEquals(e7.values().toString(), "[0]");
-        e7.put(10, "1");  // slot 0, probe to 1
-        table[1] = new LPMapEntry<Integer,String>(10, "1");
-        // assertEquals(e7.values().toString(), "[0, 1]");
-        e7.put(4, "4");  // slot 4, no probe
-        table[4] = new LPMapEntry<Integer,String>(4, "4");
-        // assertEquals(e7.values().toString(), "[0, 1, 4]");
-        e7.put(20, "2");  // slot 0, probe to 2
-        table[2] = new LPMapEntry<Integer,String>(20, "2");
-        // assertEquals(e7.values().toString(), "[0, 1, 2, 4]");
-        e7.put(14, "3");  // slot 4, probe to 0, 1, 2, 3
-        table[3] = new LPMapEntry<Integer,String>(14, "3");
-        // assertEquals(e7.values().toString(), "[0, 1, 2, 3, 4]");
-
-        Iterator<LPMapEntry<Integer,String>> it = e7.iterator();
-        int i=0;
-        while (it.hasNext()) {
-            assertEquals(table[i], it.next());
-            i++;
-        }
-    }
-
-    @Test
-    public void testTombstones() {
-        // start with load factor = 1 to fill 5 slot table
-        // force collisions as you put values in
-        // we assume that the values collection is created
-        // using a linear search through the hash table pairs, add to end
-        LPMapEntry<Integer,String>[] table = new LPMapEntry[5];
-        e7 = new BSTMap<Integer, String>(1.0f);   // load 5 of 5 is max
-
-        e7.put(0, "0");   // slot 0
-        table[0] = new LPMapEntry<Integer,String>(0, "0");
-        e7.put(10, "1");  // slot 0, probe to 1
-        table[1] = new LPMapEntry<Integer,String>(10, "1");
-        e7.put(4, "4");  // slot 4, no probe
-        table[4] = new LPMapEntry<Integer,String>(4, "4");
-        e7.put(20, "2");  // slot 0, probe to 2
-        table[2] = new LPMapEntry<Integer,String>(20, "2");
-        e7.put(14, "3");  // slot 4, probe to 0, 1, 2, 3
-        table[3] = new LPMapEntry<Integer,String>(14, "3");
-
-        Iterator<LPMapEntry<Integer,String>> it = e7.iterator();
-        int i=0;
-        while (it.hasNext()) {
-            assertEquals(table[i], it.next());
-            i++;
-        }
-
-        LPMapEntry<Integer,String> e;
-        assertEquals(e7.remove(0), "0");  // slot 0, no probe, leaves tombstone
-        it = e7.iterator();
-        e = it.next();  // should be tombstone
-        assertTrue(e.isTombstone());
-        assertTrue(e7.ghosts() == 1);
-        assertTrue(e7.hasKey(10));  // probe to 1
-        assertEquals(e7.get(20),"2");  // probe to 2
-        assertFalse(e7.hasKey(0));   // probes all
-        assertNull(e7.get(0));  // probes all
-        assertTrue(e7.size() == 4);
-
-        assertEquals(e7.remove(14), "3");  // probe to 3, leaves tombstone
-        it = e7.iterator();
-        e = it.next();  // should be tombstone from remove 0
-        assertTrue(e.isTombstone());
-        assertEquals(table[1], it.next()); // no change
-        assertEquals(table[2], it.next()); // no change
-        e = it.next();  // should be tombstone from remove 3
-        assertTrue(e.isTombstone());
-        assertEquals(table[4], it.next()); // no change
-        // assertEquals(e7.values().toString(), "[1, 2, 4]");
-        assertTrue(e7.ghosts() == 2);
-        assertFalse(e7.hasKey(0));  // still probes all
-        assertFalse(e7.hasKey(14));  // probes all
-        assertTrue(e7.hasKey(10));  // probe to 1
-        assertEquals(e7.get(20),"2");  // probe to 2
-        assertNull(e7.get(14));    // probes all
-        assertNull(e7.get(1000));   // probes all
-        assertTrue(e7.ghosts() <= e7.size());
-        assertTrue(e7.size() == 3);
-        assertTrue(e7.getCapacity() == 5);  // no change
-        assertTrue(e7.getMaxLoad() == 1f);  // no change
-        
-        assertEquals(e7.get(10), "1");
-        assertTrue(e7.hasKey(20));
-        assertTrue(e7.hasKey(4));
-        assertEquals(e7.get(4), "4");
-
-        // now insert a few things again to fill up, replacing tombstones
-        assertNull(e7.put(24,"24")); // start at 4, probe to 0
-        table[0] = new LPMapEntry<Integer,String>(24, "24");
-        it = e7.iterator();
-        for (i=0; i < 3; i++) {
-            assertEquals(table[i], it.next());
-        }
-        e = it.next();
-        assertTrue(e.isTombstone());  // still in position 3
-        assertEquals(table[4], it.next());
-        // assertEquals(e7.values().toString(), "[24, 1, 2, 4]");
-        assertTrue(e7.ghosts() == 1);
-        assertNull(e7.put(200,"200"));  // start at 0, probe to 3
-        table[3] = new LPMapEntry<Integer,String>(200, "200");
-        it = e7.iterator();
-        for (i=0; i < 5; i++) {
-            assertEquals(table[i], it.next());
-        }
-        // assertEquals(e7.values().toString(), "[24, 1, 2, 200, 4]");
-        assertTrue(e7.ghosts() == 0);
-        assertTrue(e7.size() == 5);
-
-        // now remove to create enough tombstones to trigger rehash
-        assertEquals(e7.remove(10), "1");    // slot 1 tombstone
-        assertEquals(e7.remove(4), "4");  // slot 4 tombstone
-        // assertEquals(e7.values().toString(), "[24, 2, 200]");
-        assertTrue(e7.ghosts() == 2); 
-        assertTrue(e7.size() == 3);
-        assertTrue(e7.getCapacity() == 5);  // no change
-        assertTrue(e7.getMaxLoad() == 1f);  // no change
-
-        // next remove triggers rehash
-        assertEquals(e7.remove(20),"2");  // probe 0, 1, 2, leaves tombstone
-        assertTrue(e7.size() == 2);
-        // pairs: <24,"24"> in slot 0 and <200,"200"> in slot 3
-        // tombstones: slots 1, 2, 4
-        // ghosts should now be 3, size is 2, triggers rehash
-        // pair <24,"24"> gets rehashed from slot 0 to slot 4
-        table[4] = table[0];
-        // pair <200,"200"> gets rehashed from slot 3 to slot 0
-        table[0] = table[3];
-        // slots 1, 2, 3 should be null
-        assertTrue(e7.getCapacity() == 5);  // no change
-        assertTrue(e7.ghosts() == 0);   // removed when rehash
-        it = e7.iterator();
-        assertEquals(table[0], it.next()); // slot 0
-        assertNull(it.next());  // slot 1
-        assertNull(it.next());  // slot 2
-        assertNull(it.next());  // slot 3
-        assertEquals(table[4], it.next()); // slot 4
-        // assertEquals(e7.values().toString(), "[200, 24]");
-        assertNull(e7.put(1,"1"));  // open slot
-        table[1] = new LPMapEntry<Integer,String>(1,"1");
-        assertNull(e7.put(20,"20"));  // probe 0, 1, put in 2
-        table[2] = new LPMapEntry<Integer,String>(20,"20");
-        assertNull(e7.put(3,"3"));  // open slot
-        table[3] = new LPMapEntry<Integer,String>(3,"3");
-        it = e7.iterator();
-        for (i=0; i < 5; i++) {
-            assertEquals(table[i], it.next()); 
-        }
-        // assertEquals(e7.values().toString(), "[200, 1, 20, 3, 24]");
-        assertTrue(e7.getCapacity() == 5);  // no change
-        assertTrue(e7.getMaxLoad() == 1f);  // no change
-        assertTrue(e7.ghosts() == 0);   // removed when rehash
-        assertTrue(e7.size() == 5);
-        HashSet<Integer> keys = new HashSet<Integer>();
-        Collection<String> vals = new ArrayList<String>();
-        HashSet<LPMapEntry<Integer,String>> pairs = new HashSet<LPMapEntry<Integer,String>>();
-        Integer[] ra = {200, 1, 20, 3, 24};
-        for (i=0; i < ra.length; i++) {
-            keys.add(ra[i]);
-            vals.add(ra[i].toString());
-            pairs.add(new LPMapEntry<Integer,String>(ra[i],ra[i].toString()));
-        }
-        assertEquals(keys, e7.keys());
-        assertTrue(sameCollection(vals, e7.values()));
-        assertEquals(pairs, e7.entries());
-    }
-
-
 }
