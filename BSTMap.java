@@ -132,7 +132,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      */
     public boolean hasKey(K key, BNode curr) {
         if (key == null) {
-            //Throw Error?
+            return false;
         }
         if (curr.isLeaf()) {
             return false;
@@ -152,6 +152,9 @@ public class BSTMap<K extends Comparable<? super K>, V>
     }
     
     private boolean hasValue(V value, BNode curr) {
+        if (value == null) {
+            return false;
+        }
         if (curr.equals(this.leaf)) {
             return false;
         }
@@ -173,7 +176,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      */
     public V get(K key, BNode curr) {
         if (key == null) {
-            //Throw error
+            return null;
         }
         if (curr.isLeaf()) {
             return null;
@@ -199,10 +202,12 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree into which to put the entry
      *  @return the original value associated with the key, or null if not found
      */
-    private V put(K key, V val, BNode curr) {
+    private V put(K key, V val, BNode curr) throws IllegalArgumentException {
         this.modified = true;
         // TODO: check that key, val are not null and throw error otherwise?
-
+        if (key == null || val == null) {
+            throw new IllegalArgumentException();
+        }
         /* If the map has the key, replace the value */
         /*
         if (this.hasKey(key, curr)) {
@@ -264,6 +269,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
             return this.find(key, curr.right);
         }
     }
+
     @Override()
     public V remove(K key) {
         this.modified = true;
@@ -463,6 +469,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @return the resulting submap
      */
     public BSTMap<K, V> subMap(K fromKey, K toKey) {
+        /*
         BSTMap<K, V> submap = new BSTMap();
         LinkedList<Map.Entry<K, V>> ordered = (LinkedList<Map.Entry<K, V>>) this.inOrder();
         K firstKey = this.firstKey(this.root);
@@ -485,6 +492,34 @@ public class BSTMap<K extends Comparable<? super K>, V>
             }
         } 
         return submap; 
+        */
+        BSTMap<K, V> submap = new BSTMap();
+        K firstKey = this.firstKey(this.root);
+        K lastKey = this.lastKey(this.root);
+        // return an empty map if underlying map is empty
+        if (this.root.equals(this.leaf)) {
+            return submap;
+        }
+        // adjust bounds of submap
+        if (fromKey.compareTo(firstKey) < 0) {
+            fromKey = firstKey;
+        }
+        if (toKey.compareTo(lastKey) > 0) {
+            toKey = lastKey;
+        }
+        this.addToSubmap(submap, this.root, fromKey, toKey);
+        return submap;
+    }
+    
+    private void addToSubmap(BSTMap<K, V> map, BNode curr, K low, K high) {
+        if (curr.equals(this.leaf)) {
+            return;
+        }
+        if (curr.key.compareTo(low) >= 0 && curr.key.compareTo(high) <= 0) {
+            map.put(curr.key, curr.value);
+            this.addToSubmap(map, curr.left, low, high);
+            this.addToSubmap(map, curr.right, low, high);
+        }
     }
 
     @Override
