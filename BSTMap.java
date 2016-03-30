@@ -148,7 +148,17 @@ public class BSTMap<K extends Comparable<? super K>, V>
 
     @Override()
     public boolean hasValue(V value) {
-        return false; 
+        return this.hasValue(value, this.root); 
+    }
+    
+    private boolean hasValue(V value, BNode curr) {
+        if (curr.equals(this.leaf)) {
+            return false;
+        }
+        if (curr.value.equals(value)) {
+            return true;
+        }
+        return this.hasValue(value, curr.left) || this.hasValue(value, curr.right);
     }
     
     @Override()
