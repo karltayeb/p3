@@ -209,12 +209,11 @@ public class BSTMap<K extends Comparable<? super K>, V>
             throw new IllegalArgumentException();
         }
         /* If the map has the key, replace the value */
-        /*
         if (this.hasKey(key, curr)) {
             return this.find(key, curr).setValue(val);
         }
-        */
-        /* Otherwise make a new node and put it in the tree */
+        
+	/* Otherwise make a new node and put it in the tree */
         BNode node = new BNode(key, val);
         node.right = this.leaf;
         node.left = this.leaf;
@@ -236,7 +235,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
             return;
         }
         /* Otherwise move right or left and insert*/
-        if (node.key.compareTo(curr.key) <= 0) {
+        if (node.key.compareTo(curr.key) < 0) {
             if (curr.left.isLeaf()) {
                 curr.left = node;
                 this.size++;
