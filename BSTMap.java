@@ -446,15 +446,35 @@ public class BSTMap<K extends Comparable<? super K>, V>
         collection.add(curr);
         inOrderAddToCollection(curr.right,collection);
     }
-
+    
     /** Returns a copy of the portion of this map whose keys are in a range.
      *  @param fromKey the starting key of the range, inclusive if found
      *  @param toKey the ending key of the range, inclusive if found
      *  @return the resulting submap
      */
     public BSTMap<K, V> subMap(K fromKey, K toKey) {
-    // Fill in
-        return null;
+        BSTMap<K, V> submap = new BSTMap();
+        LinkedList<Map.Entry<K, V>> ordered = (LinkedList<Map.Entry<K, V>>) this.inOrder();
+        K firstKey = this.firstKey(this.root);
+        K lastKey = this.lastKey(this.root);
+        // return an empty map if underlying map is empty
+        if (this.root.equals(this.leaf)) {
+            return this;
+        }
+        // adjust bounds of submap
+        if (fromKey.compareTo(firstKey) < 0) {
+            fromKey = firstKey;
+        }
+        if (toKey.compareTo(lastKey) > 0) {
+            toKey = lastKey;
+        }
+        for (Map.Entry<K, V> entry : ordered) {
+            BNode node = (BNode) entry;
+            if (fromKey.compareTo(node.key) <= 0 && toKey.compareTo(node.key) >= 0) {
+                submap.put(node.key, node.value);
+            }
+        } 
+        return submap; 
     }
 
     @Override
