@@ -1,0 +1,27 @@
+Authors: Karl Tayeb, Ryan Dens
+JHEDIDs: ktayeb1, rdens1
+Assignment: P3-a
+Due: 3/30/2016
+
+Overall this project ended up being a little trickier than expected, but ultimately referring to BSTree and the visualizations in the online textbook helped.
+
+To the best of our knowledge the map works as intended.
+
+BNode extends AbstractMap, it contains its own toString function as well which is utilized in the maps to String formatted as "(K.toString(), V.toString())"
+
+The implementation we made uses one sentinal node called leaf which is declared as a private final instance variable. We figured this keeps the functionality the sentinal is supposed to provide without creating potentially many empty nodes. If an entry was the last entry on the tree its left and right children reference this node.
+
+One thing we weren't sure of (or if we will be graded on it at all) is what if put is given bad input. It throws an illegal argument acception rather than null if it is given a null key or pointer reference. We made this choice because put could return null if the node to insert wasn't already in the tree and we wanted to differentiate the output of a successful put from a put that didn't happen at all.
+
+put() makes use of find and insert helper methods. Find takes a key and returns the node if it is in the tree or null otherwise. Insert runs if put cannot find and replace the value for a given key. While insert is perhaps not the cleanest recursive function we take advantage of the fact that insert only gets to a leaf if the root node is a leaf, thus handling the case of when we are inserting at the root.
+
+remove() works in two steps. first it uses get to see if the key is in the map. if it is it then calls a helper function called removeroutine() which removes it from the map. Inspired by the implementation in the online textbook, remove routine uses helper functions removemax and remove min. We seperated it like this to avoid having to carry up the information on what the removed value was up the recursive stack.
+
+Somewhat arbitrarily we have entries() and keys() return HashSets, because thats what we did in LPHashMap and the particular implementation of set we use shouldnt matter. Likwise, values() returns a LinkedList.
+
+inOrder() relies on a helper method inOrderAddToCollection which takes a collection to add elements to and the tree to do an inOrder traversal on. A variation on this idea is used to help subamp in the helper function addToSubmap()
+
+Please note we have implemented remove in the Iterator and have provided a file that demonstrates how it works by creating a map, iterating over it, and calling removals on the iterator. The file is called testIterator.java. The iterator throws concurrent modification exceptions if the BSTMap is modified while iterating. While the test class does not explicity check that the element was removed from the underlying map, it relies on toString() which creates an inorder traversal and prints out the results. Thus, visually demonstrating that the element was removed from the BSTMap is equivalent to showing that the iterator successfully removed that element.
+
+BSTMap.java is checkstyle compliant.
+Since one time we were given a test file that wasn't checkstyle compliant, we didn't make our iterator test checkstyle compliant.
