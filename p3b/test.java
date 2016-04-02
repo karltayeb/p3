@@ -4,11 +4,13 @@ public class test {
 	public static void main(String[] args){
 		AVLMap<Integer, String> map = makeMap();
 		System.out.println(map);
+		System.out.println(map.isBalanced());
 	}
 
 	private static AVLMap<Integer, String> makeMap() {
 		AVLMap<Integer, String> map = new AVLMap();
 		map.put(32, "32");
+		map.root();
 		map.put(256, "256");
 		map.put(512, "512");
 		map.put(1024, "1024");

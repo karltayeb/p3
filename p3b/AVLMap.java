@@ -36,5 +36,28 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
     	return curr.height;
 
     }
+    /** TESTIN METHOD ONLY */
+    public void root(){
+    	System.out.println("Root = " + this.root);
+    }
+
+    public boolean isBalanced() {
+    	return isBalanced(this.root);
+    }
+    private boolean isBalanced(BNode curr) {
+    	if (curr.isLeaf()) {
+    		return true;
+    	} else if (Math.abs(balanceFactor(curr)) > 1) {
+    		return false;
+    	} else {
+    		return (isBalanced(curr.right) && isBalanced(curr.left));
+    	}
+    }
+    private int balanceFactor(BNode curr) {
+    	if (curr == null || curr.isLeaf()) {
+    		return 0;
+    	}
+    	return curr.right.height - curr.left.height;
+    }
 
 }
