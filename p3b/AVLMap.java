@@ -48,13 +48,12 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         if (Math.abs(bf) > 1) {
             if (bf > 1) {
                 if (this.balanceFactor(this.root.left) == -1) {
-                    root.left = this.leftrotate(root.left);
-                    this.updateHeight(root.left);
+                    this.root.left = this.leftrotate(this.root.left);
+                    this.updateHeight(this.root.left);
                 }
                 this.root = this.rightrotate(this.root);
                 this.updateHeight(this.root);
-            }
-            if (bf < -1) {
+            } else if (bf < -1) {
                 if (this.balanceFactor(this.root.right) == 1) {
                     this.root.right = this.rightrotate(this.root.right);
                     this.updateHeight(this.root.right);
@@ -109,12 +108,12 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         	return;
         } 
         if (bfr < -1) {
-        	if (this.balanceFactor(curr.right) == 1) {
-        		curr.right = this.rightrotate(curr.right);
-        		this.updateHeight(curr.right);
+        	if (this.balanceFactor(curr.right.right) == 1) {
+        		curr.right.right = this.rightrotate(curr.right.right);
+        		this.updateHeight(curr.right.right);
         	}
-        	curr = this.leftrotate(curr);
-        	this.updateHeight(curr);
+        	curr.right = this.leftrotate(curr.right);
+        	this.updateHeight(curr.right);
         	return;
         }
         return;
