@@ -5,6 +5,11 @@ public class test {
 		AVLMap<Integer, String> map = makeMap();
 		System.out.println(map);
 		System.out.println(map.isBalanced());
+
+		AVLMap<Integer, String> submap = map.subMap(511,2025);
+		System.out.println(submap);
+		System.out.println(submap.balanceFactor());
+		System.out.println(submap.isBalanced());
 	}
 
 	private static AVLMap<Integer, String> makeMap() {
@@ -20,7 +25,6 @@ public class test {
 		map.put(16, "16");
 		map.put(2, "2");
 		map.put(4, "4");
-		map.put(600, "600");
 		return map;
 	}
 
