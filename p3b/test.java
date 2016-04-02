@@ -20,6 +20,7 @@ public class test {
 		map.put(16, "16");
 		map.put(2, "2");
 		map.put(4, "4");
+		map.put(600, "600");
 		return map;
 	}
 
