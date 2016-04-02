@@ -42,6 +42,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         node.right = this.leaf;
         node.left = this.leaf;
         this.insert(node, this.root);
+        this.updateHeight(this.root);
         return null;
     }
 
@@ -84,7 +85,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         }
         if (bf < -1) {
         	if (this.balanceFactor(curr.right) == 1) {
-        		curr.left = rightrotate(curr.right);
+        		curr.right = rightrotate(curr.right);
         	}
         	curr = this.leftrotate(curr);
         	return;

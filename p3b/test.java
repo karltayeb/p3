@@ -18,9 +18,9 @@ public class test {
 		//map.put(512, "512");
 
 		//map.put(256, "256");
-		map.put(4, "y");
-		map.put(32, "y");
-		map.put(8, "y");	
+		map.put(3, "y");
+		map.put(1, "y");
+		map.put(2, "y");	
 		//map.put(2, "2");
 		/*
 		map.put(1024, "1024");
