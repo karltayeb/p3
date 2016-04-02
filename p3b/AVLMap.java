@@ -41,8 +41,28 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         BNode node = new BNode(key, val);
         node.right = this.leaf;
         node.left = this.leaf;
+        this.updateHeight(node);
         this.insert(node, this.root);
         this.updateHeight(this.root);
+        int bf = balanceFactor(this.root);
+        if (Math.abs(bf) > 1) {
+            if (bf > 1) {
+                if (this.balanceFactor(this.root.left) == -1) {
+                    root.left = this.leftrotate(root.left);
+                    this.updateHeight(root.left);
+                }
+                this.root = this.rightrotate(this.root);
+                this.updateHeight(this.root);
+            }
+            if (bf < -1) {
+                if (this.balanceFactor(this.root.right) == 1) {
+                    this.root.right = this.rightrotate(this.root.right);
+                    this.updateHeight(this.root.right);
+                }
+                this.root = this.leftrotate(this.root);
+                this.updateHeight(this.root);
+            }
+        }
         return null;
     }
 
@@ -55,6 +75,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         if (curr.isLeaf()) {
             this.root = node;
             this.size++;
+            this.updateHeight(curr);
             return;
         }
         /* Otherwise move right or left and insert*/
@@ -62,6 +83,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
             if (curr.left.isLeaf()) {
                 curr.left = node;
                 this.size++;
+                this.updateHeight(curr);
                 return;
             }
             this.insert(node, curr.left);
@@ -69,50 +91,34 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
             if (curr.right.isLeaf()) {
                 curr.right = node;
                 this.size++;
+                this.updateHeight(curr);
                 return;
             }
             this.insert(node, curr.right);
-        }
-        
+        }    
         this.updateHeight(curr);
-        int bf = this.balanceFactor(curr);
-        if (bf > 1) {
-        	if (this.balanceFactor(curr.left) == -1) {
-        		curr.left = leftrotate(curr.left);
+        int bfl = this.balanceFactor(curr.left);
+        int bfr = this.balanceFactor(curr.right);
+        if (bfl > 1) {
+        	if (this.balanceFactor(curr.left.left) == -1) {
+        		curr.left.left = this.leftrotate(curr.left.left);
+        		this.updateHeight(curr.left.left);
         	}
-        	curr = this.rightrotate(curr);
+        	curr.left = this.rightrotate(curr.left);
+            this.updateHeight(curr.left);
         	return;
-        }
-        if (bf < -1) {
+        } 
+        if (bfr < -1) {
         	if (this.balanceFactor(curr.right) == 1) {
-        		curr.right = rightrotate(curr.right);
+        		curr.right = this.rightrotate(curr.right);
+        		this.updateHeight(curr.right);
         	}
         	curr = this.leftrotate(curr);
+        	this.updateHeight(curr);
         	return;
         }
-
         return;
     }
-
-    /** Find and return the node with a key in a subtree, null if not found.
-     * @param key the key to look for
-     * @param curr the root of the subtree we're searching
-     * @return the node we find
-     */
-    protected BNode find(K key, BNode curr) {
-        if (curr.isLeaf()) {
-            return this.leaf;
-        }
-        if (key.compareTo(curr.key) < 0) {
-            return this.find(key, curr.left);
-        } else if (key.compareTo(curr.key) == 0) {
-            return curr;
-        } else {
-            return this.find(key, curr.right);
-        }
-    }
-
-
 
 
     /** Recursively updates the heights of nodes in the tree
@@ -120,20 +126,19 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
      */
     private int updateHeight(BNode curr) {
     	if (curr.isLeaf()) {
-    		return -1; //height of leaves is -1
-    	} else {
-    		curr.height =
-    			Math.max(updateHeight(curr.right), updateHeight(curr.left));
-    		curr.height++;
+            curr.height = 0;
+    		return 0; //height of leaves is 0
     	}
+    	curr.height = 1 +
+            Math.max(updateHeight(curr.right), updateHeight(curr.left));
     	return curr.height;
 
     }
     /** TESTIN METHOD ONLY */
-    public void root(){
-    	System.out.println("Root = " + this.root);
+    public K root(){
+    	return this.root.key;
     }
-
+    
     public boolean isBalanced() {
     	return isBalanced(this.root);
     }
@@ -141,40 +146,25 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
     	if (curr.isLeaf()) {
     		return true;
     	} 
-    	if (Math.abs(balanceFactor(curr)) <= 1
-    		&& isBalanced(curr.right) && isBalanced(curr.left)) {
-    		return true;
-    	}
-    	return false;
+        int bf = this.balanceFactor(curr);
+        if(Math.abs(bf) > 1) {
+            return false;
+        } else {
+            return this.isBalanced(curr.right) && this.isBalanced(curr.right);
+        }
     }
+
     public int balanceFactor() {
     	return balanceFactor(this.root);
     }
     private int balanceFactor(BNode curr) {
-    	if (curr == null || curr.isLeaf()) {
+    	if (curr.isLeaf()) {
     		return 0;
     	}
     	return curr.left.height - curr.right.height;
     }
 
     private void removebalanceroutine(BNode curr) {
-    	/**
-    	// Descend to the lowest unbalanced subtree
-    	while(!this.isBalanced(curr)) {
-    		this.balanceroutine(curr.left);
-    		this.balanceroutine(curr.right);
-    	}
-    	if (this.isBalanced(curr)) {
-    		return;
-    	}
-    	if (this.balanceFactor(curr) < -1) {
-    		curr = this.leftrotate(curr);
-    		return;
-    	} else {
-    		curr = this.rightrotat(curr);
-    		return;
-    	}
-    	*/
     	return;
     }
 

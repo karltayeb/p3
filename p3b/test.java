@@ -2,40 +2,72 @@ import java.util.Map;
 
 public class test {
 	public static void main(String[] args){
-		AVLMap<Integer, String> map = makeMap();
-		System.out.println(map);
-		System.out.println(map.isBalanced());
-
-		AVLMap<Integer, String> submap = map.subMap(400,1028);
-		System.out.println(submap);
-		System.out.println(submap.balanceFactor());
-		System.out.println(submap.isBalanced());
+		testSingleRight();
+		testLeftRight();
 	}
 
-	private static AVLMap<Integer, String> makeMap() {
+	private static void testSingleRight() {
 		AVLMap<Integer, String> map = new AVLMap();
-	
-		//map.put(512, "512");
 
-		//map.put(256, "256");
-		map.put(3, "y");
-		map.put(1, "y");
-		map.put(2, "y");	
-		//map.put(2, "2");
-		/*
-		map.put(1024, "1024");
-		map.put(128, "128");
-		map.put(64, "64");
-		map.put(8, "8");
-		map.put(16, "16");
-		map.put(2, "2");
+		map.put(64,"thirtytwo");
+		map.put(32, "sixteen");
+		map.put(16, "sixtyfour");
+		System.out.println("Root is " + map.root());
+		System.out.println("Balanced: " + map.isBalanced());
+		System.out.println(map);
+		if (map.root() == 32 && map.isBalanced()) {
+			System.out.println("Passed Right Rotate 1");
+		} else {
+			System.out.println("Failed Right Rotate 1");
+		}
 
+		map.clear();
+		map.put(32,"thirtytwo");
+		map.put(16, "sixteen");
+		map.put(64, "sixtyfour");
+		map.put(8, "eight");
+		map.put(4, "four");
+		//map.put(4, "four");
+		System.out.println("Root is " + map.root());
+		System.out.println("Balanced: " + map.isBalanced()+ " BF = " + map.balanceFactor());
+		System.out.println(map);
+		if (map.root() == 32 && map.isBalanced()) {
+			System.out.println("Passed Right Rotate 2");
+		} else {
+			System.out.println("Failed Right Rotate 2");
+		}
+	}
 
-		map.put(400, "400");
-		map.put(1028, "1028");
-		*/
-		map.root();
-		return map;
+	private static void testLeftRight() {
+		AVLMap<Integer, String> map = new AVLMap();
+
+		map.put(64,"thirtytwo");
+		map.put(32, "sixteen");
+		map.put(40, "fourty");
+		System.out.println("Root is " + map.root());
+		System.out.println("Balanced: " + map.isBalanced());
+		System.out.println(map);
+		if (map.root() == 40 && map.isBalanced()) {
+			System.out.println("Passed LeftRight Rotate 1");
+		} else {
+			System.out.println("Failed LeftRight Rotate 1");
+		}
+
+		map.clear();
+		map.put(32,"thirtytwo");
+		map.put(16, "sixteen");
+		map.put(64, "sixtyfour");
+		map.put(8, "eight");
+		map.put(9, "nine");
+		//map.put(4, "four");
+		System.out.println("Root is " + map.root());
+		System.out.println("Balanced: " + map.isBalanced()+ " BF = " + map.balanceFactor());
+		System.out.println(map);
+		if (map.root() == 32 && map.isBalanced()) {
+			System.out.println("Passed LeftRight Rotate 2");
+		} else {
+			System.out.println("Failed LeftRight Rotate 2");
+		}		
 	}
 
 
