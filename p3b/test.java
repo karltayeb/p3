@@ -6,7 +6,7 @@ public class test {
 		System.out.println(map);
 		System.out.println(map.isBalanced());
 
-		AVLMap<Integer, String> submap = map.subMap(511,2025);
+		AVLMap<Integer, String> submap = map.subMap(400,1024);
 		System.out.println(submap);
 		System.out.println(submap.balanceFactor());
 		System.out.println(submap.isBalanced());

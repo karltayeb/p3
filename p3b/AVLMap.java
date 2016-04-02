@@ -19,6 +19,10 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         this.modified = true;
         V temp = this.put(key, val, this.root);
         this.updateHeight(this.root);
+        while (!this.isBalanced()){ //runs at most twice
+        	//this.balanceroutine(this.root);
+        	break;
+        }
         return temp;
     }
 
@@ -27,7 +31,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
      */
     private int updateHeight(BNode curr) {
     	if (curr.isLeaf()) {
-    		curr.height = 0;
+    		return -1; //height of leaves is -1
     	} else {
     		curr.height =
     			Math.max(updateHeight(curr.right), updateHeight(curr.left));
@@ -62,6 +66,10 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
     		return 0;
     	}
     	return curr.right.height - curr.left.height;
+    }
+
+    private void balanceroutine() {
+
     }
 
 

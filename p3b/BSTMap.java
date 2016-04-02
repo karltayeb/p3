@@ -45,6 +45,9 @@ public class BSTMap<K extends Comparable<? super K>, V>
             this.left = null;
             this.right = null;
             this.height = 0;
+            if(this.key == null) {
+                this.height = -1;
+            }
         }
 
         /** Check whether this node is a leaf sentinel, based on key.
