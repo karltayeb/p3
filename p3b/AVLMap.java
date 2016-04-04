@@ -102,35 +102,36 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         if (bfl > 1) {
         	if (this.balanceFactor(curr.left.left) == -1) {
         		curr.left.left = this.leftrotate(curr.left.left);
-        		this.updateHeight(curr.left.left);
+        		//this.updateHeight(curr.left.left);
         	}
         	curr.left = this.rightrotate(curr.left);
-            this.updateHeight(curr.left);
-        	return;
+            return;
+            //this.updateHeight(curr.left);
         } else if (bfl < -1) {
             if (this.balanceFactor(curr.left.right) == 1) {
                 curr.left.right = this.rightrotate(curr.left.right);
-                this.updateHeight(curr.left.right);
+                //this.updateHeight(curr.left.right);
             }
             curr.left = this.leftrotate(curr.left);
-            this.updateHeight(curr.left);
+            //this.updateHeight(curr.left);
             return;            
         }
         if (bfr < -1) {
         	if (this.balanceFactor(curr.right.right) == 1) {
         		curr.right.right = this.rightrotate(curr.right.right);
-        		this.updateHeight(curr.right.right);
+        		//this.updateHeight(curr.right.right);
         	}
         	curr.right = this.leftrotate(curr.right);
-        	this.updateHeight(curr.right);
+        	//this.updateHeight(curr.right);
         	return;
         } else if (bfr > 1) {
             if (this.balanceFactor(curr.right.left) == -1) {
                 curr.right.left = this.leftrotate(curr.right.left);
-                this.updateHeight(curr.right.left);
+                //this.updateHeight(curr.right.left);
             }
             curr.right = this.rightrotate(curr.right);
-            this.updateHeight(curr.right);           
+            return;
+            //this.updateHeight(curr.right);           
         }
         return;
     }

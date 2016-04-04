@@ -240,8 +240,8 @@ public class test {
 		AVLMap<Integer, String> map = new AVLMap();
 		int random = 0;
 		int count = 0;
-		while(map.isBalanced() && count < 10000) {
-			random = (int)(Math.random() * 20000 + 1);
+		while(map.isBalanced() && count < 50000) {
+			random = (int)(Math.random() * 100000 + 1);
 			map.put(random, "");
 			count++;
 		}
