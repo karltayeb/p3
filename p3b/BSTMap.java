@@ -22,7 +22,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
     /** Inner node class.  Do not make this static because you want
         the K to be the same K as in the BSTMap header.
     */
-    protected class BNode extends AbstractMap.SimpleEntry<K, V> {
+    public class BNode extends AbstractMap.SimpleEntry<K, V> {
         /** The key of the entry (null if sentinel node). */
         protected K key;
         /** The value of the entry (null if sentinel node). */

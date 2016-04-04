@@ -1,13 +1,20 @@
 import java.util.Map;
 import java.lang.Math;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class test {
 	public static void main(String[] args){
-		testSingleRight();
-		testLeftRight();
-		testSingleLeft();
-		testRightLeft();
-		randomInsert();
+		//testSingleRight();
+		//testLeftRight();
+		//testSingleLeft();
+		//testRightLeft();
+		//randomInsert();
+		testEntriesKeysValues();
+		testSubmap();
 	}
 
 	private static void testSingleRight() {
@@ -53,7 +60,6 @@ public class test {
 		map.put(8, "");
 		map.put(24, "");
 		map.put(4, "");
-		//map.put(4, "four");
 		System.out.println("Root is " + map.root());
 		System.out.println("Balanced: " + map.isBalanced()+ " BF = " + map.balanceFactor());
 		System.out.println(map);
@@ -251,4 +257,91 @@ public class test {
 			System.out.println("FAILED Random Insert Test");			
 		}
 	}
+
+	private static void testEntriesKeysValues() {
+		System.out.println("Testing entries()");
+		AVLMap<Integer, String> map = new AVLMap();
+
+		HashSet<Map.Entry<Integer,String>> otherentries = new HashSet();
+		HashSet<Integer> otherkeys = new HashSet();
+		LinkedList<String> othervalues = new LinkedList();
+
+		int random = 0;
+		int count = 0;
+
+		if(map.entries().isEmpty()) {
+			System.out.println("Empty map returns empty set");
+		} else {
+			System.out.println("FAILURE: Empty map does no return empty set.");
+		}
+		while(count < 10) {
+			random = (int)(Math.random() * 100 + 1);
+			map.put(random, ""+random);
+		//	Map.Entry<Integer, Stinrg> node = new Map.Entry(random, random+"");
+		//	otherentries.add(node);
+			otherkeys.add(random);
+			if (!othervalues.contains(""+random)){
+				othervalues.add(""+random);				
+			}
+			count++;
+		}
+		//if(sameCollection(map.entries(), otherentries)) {
+		//	System.out.println("Entries seems to be working.");
+		//}
+		if(sameCollection(otherkeys, map.keys())) {
+			System.out.println("Keys() seems to be working");
+		}
+		if (sameCollection(othervalues, map.values())) {
+			System.out.println("Values() seems to be working");
+		} else {
+			System.out.println(map.values());
+			System.out.println(othervalues);
+		}
+	}
+
+	public static void testSubmap() {
+		boolean one = false;
+		boolean two = false;
+		boolean three = false;
+		boolean four = false;
+
+		AVLMap<Integer, String> map = new AVLMap();
+		for (int i = 0; i < 100; i++){
+			map.put(i, i+"");
+		}
+		AVLMap<Integer, String> submap = map.subMap(20, 30);
+		if (submap.size() == 11 && submap.isBalanced()) {
+			one = true;
+		}
+		submap = map.subMap(20, 200);
+		if (submap.size() == 80 && submap.isBalanced()) {
+			two = true;
+		}
+		submap = map.subMap(-10, 5);
+		if (submap.size() == 6 && submap.isBalanced()) {
+			three = true;
+		}
+		submap = map.subMap(20,19);
+		if (submap.size() == 0 && submap.isBalanced()) {
+			four = true;
+		}
+		if (one && two && three && four) {
+			System.out.println("Submap works!");
+		} else {
+			System.out.println("Submap failed");
+		}
+	}
+
+    public static <T> boolean sameCollection(Collection<T> c1, Collection<T> orig) {
+        ArrayList<T> c2 = new ArrayList<T>(orig); // make copy
+        if (c1.size() != c2.size())
+            return false;
+        for (T val : c1) {  // uses iterator
+            if (!c2.remove(val))   // so count will be accurate
+                return false;
+        }
+        if (c2.size() != 0)  // should be empty by now
+            return false;
+        return true;  // passed all tests
+    }
 }
