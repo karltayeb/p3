@@ -257,7 +257,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree into which to put the entry
      *  @return the original value associated with the key, or null if not found
      */
-    protected V put(K key, V val, BNode curr) throws IllegalArgumentException {
+    private V put(K key, V val, BNode curr) throws IllegalArgumentException {
         this.modified = true;
         if (key == null || val == null) {
             throw new IllegalArgumentException();
@@ -279,7 +279,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param node the node to insert at
      * @param curr the node of the current subtree
      */
-    protected void insert(BNode node, BNode curr) {
+    private void insert(BNode node, BNode curr) {
         this.modified = true;
         /* If we try to insert on a sentinal, replace the sentinal.
          * since we inspect left and right children, this only happens when
@@ -529,7 +529,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree to iterate over
      *  @return an iterable list of entries ordered by keys
      */
-    protected Collection<Map.Entry<K, V>> inOrder(BNode curr) {
+    private Collection<Map.Entry<K, V>> inOrder(BNode curr) {
         LinkedList<Map.Entry<K, V>> ordered = new LinkedList<Map.Entry<K, V>>();
         this.inOrderAddToCollection(curr, ordered);
         return ordered;
@@ -541,7 +541,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the current root of the subtree
      *  @param collection the collection you are adding nodes to
      */
-    protected void inOrderAddToCollection(BNode curr,
+    private void inOrderAddToCollection(BNode curr,
                 Collection<Map.Entry<K, V>> collection) {
         if (curr.isLeaf()) {
             return;
@@ -581,7 +581,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param low the min value key we'll allow
      * @param high the max value key we'll allow 
      */
-    protected void addToSubmap(BSTMap<K, V> map, BNode curr, K low, K high) {
+    private void addToSubmap(BSTMap<K, V> map, BNode curr, K low, K high) {
         if (curr.key == null) {
             return;
         }

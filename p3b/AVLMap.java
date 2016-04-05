@@ -67,8 +67,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         return null;
     }
 
-    @Override
-    protected void insert(BNode node, BNode curr) {
+    private void insert(BNode node, BNode curr) {
         this.modified = true;
         /* If we try to insert on a sentinal, replace the sentinal.
          * since we inspect left and right children, this only happens when
