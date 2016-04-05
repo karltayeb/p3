@@ -8,16 +8,16 @@ import java.util.LinkedList;
 
 public class test {
 	public static void main(String[] args){
-		//testSingleRight();
-		//testLeftRight();
-		//testSingleLeft();
-		//testRightLeft();
-		//randomInsert();
-		testEntriesKeysValues();
-		testSubmap();
-		testRemoveLeaves();
-		testRemoveSingleChild();
-		testRemoveDoubleChild();
+		testSingleRight();
+		testLeftRight();
+		testSingleLeft();
+		testRightLeft();
+		randomInsert();
+		//testEntriesKeysValues();
+		//testSubmap();
+		//testRemoveLeaves();
+		//testRemoveSingleChild();
+		//testRemoveDoubleChild();
 	}
 
 	private static void testSingleRight() {

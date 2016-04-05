@@ -62,7 +62,8 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
                 this.updateHeight(this.root);
             }
         }
-        this.updateHeight(this.root);
+        this.root.height =
+        	Math.max(this.root.left.height, this.root.right.height) + 1;
         return null;
     }
 
@@ -95,8 +96,14 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
                 return;
             }
             this.insert(node, curr.right);
-        }    
-        this.updateHeight(curr);
+        }  
+        if (!curr.left.isLeaf()) {
+        	curr.left.height = Math.max(curr.left.right.height, curr.left.left.height) + 1;
+        }
+        if (!curr.right.isLeaf()) {
+        	curr.right.height = Math.max(curr.right.right.height, curr.right.left.height) + 1;
+        }
+        curr.height = Math.max(curr.right.height, curr.left.height) + 1;
         int bfl = this.balanceFactor(curr.left);
         int bfr = this.balanceFactor(curr.right);
         if (bfl > 1) {
@@ -136,6 +143,15 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         return;
     }
 
+    /** Removes a key from the map.
+     * @param key to search and remove from map
+     * @return value of entry removed from map
+     */
+    @Override()
+    public V remove(K key) {
+        this.modified = true;
+        return this.remove(key, this.root);
+    }
 
     /** Recursively updates the heights of nodes in the tree
      * @param curr the current node in consideration

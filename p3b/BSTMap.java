@@ -349,17 +349,15 @@ public class BSTMap<K extends Comparable<? super K>, V>
         V temp = this.get(key);
         if (temp != null) {
             this.removeroutine(key, curr);
-            this.size--;
         }
         return temp;
     }
-    
     /** Helper method for remove that carries out deletion.
      * @param key the key of the entry to remove, if there
      * @param curr the root of the subtree from which to remove the entry
      * @return the node associated with the removed key, or null if not found
      */
-    protected BNode removeroutine(K key, BNode curr) {
+    private BNode removeroutine(K key, BNode curr) {
         if (curr.isLeaf()) {
             return this.leaf;
         }
@@ -395,7 +393,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
     }
 
     /** Helper function to remove root.*/
-    public void removeroot() {
+    private void removeroot() {
         BNode newroot = this.find(this.firstKey(this.root.right),
                                                     this.root.right);
         if (newroot.isLeaf()) {
