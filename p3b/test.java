@@ -15,6 +15,9 @@ public class test {
 		//randomInsert();
 		testEntriesKeysValues();
 		testSubmap();
+		testRemoveLeaves();
+		testRemoveSingleChild();
+		testRemoveDoubleChild();
 	}
 
 	private static void testSingleRight() {
@@ -343,5 +346,109 @@ public class test {
         if (c2.size() != 0)  // should be empty by now
             return false;
         return true;  // passed all tests
+    }
+
+    public static void testRemoveLeaves() {
+		AVLMap<Integer, String> map = new AVLMap();
+		System.out.println("Testing Remove Leaves");
+		map.put(64,"");
+		map.put(16, "");
+		map.put(256, "");
+		map.put(8,"");
+		map.put(32, "");
+		map.put(128, "");
+		map.put(512,"");
+		map.put(2, "");
+		map.put(4, "");
+		System.out.println("Root is " + map.root());
+
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(2);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(4);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(8);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(32);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(128);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(512);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(16);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(256);
+		System.out.println("Try to remove root");
+		map.remove(64);
+		System.out.println(map);   	
+    }
+    public static void testRemoveSingleChild() {
+		AVLMap<Integer, String> map = new AVLMap();
+		System.out.println("Testing Remove SingleChild");
+		map.put(64,"");
+		map.put(16, "");
+		map.put(256, "");
+		map.put(8,"");
+		map.put(32, "");
+		map.put(128, "");
+		map.put(512,"");
+		map.put(2, "");
+		map.put(4, "");
+		map.put(1024, "");
+
+		System.out.println("Root is " + map.root());
+
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(512);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(4);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(8);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(2);
+		map.remove(1024);
+		map.remove(32);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(128);
+		System.out.println("Balanced: " + map.isBalanced());
+		System.out.println(map);   	
+    }
+
+    public static void testRemoveDoubleChild() {
+		AVLMap<Integer, String> map = new AVLMap();
+		System.out.println("Testing Remove SingleChild");
+		map.put(64,"");
+		map.put(16, "");
+		map.put(256, "");
+		map.put(8,"");
+		map.put(32, "");
+		map.put(128, "");
+		map.put(512,"");
+		map.put(2, "");
+		map.put(4, "");
+		map.put(28, "");
+		map.put(34,"");
+		map.put(124, "");
+		map.put(132, "");
+		map.put(1020, "");
+		map.put(1024, "");
+
+		System.out.println("Root is " + map.root());
+
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(512);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(128);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(32);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(8);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(16);
+		System.out.println("Balanced: " + map.isBalanced());
+		map.remove(256);
+		System.out.println("Balanced: " + map.isBalanced());
+
+		System.out.println(map);   	
     }
 }
