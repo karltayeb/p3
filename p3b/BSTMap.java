@@ -393,7 +393,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
     }
 
     /** Helper function to remove root.*/
-    private void removeroot() {
+    protected void removeroot() {
         BNode newroot = this.find(this.firstKey(this.root.right),
                                                     this.root.right);
         if (newroot.isLeaf()) {

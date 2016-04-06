@@ -14,10 +14,12 @@ public class test {
 		//testRightLeft();
 		//randomInsert();
 		//testEntriesKeysValues();
-		testSubmap();
-		testRemoveLeaves();
-		testRemoveSingleChild();
-		testRemoveDoubleChild();
+		//testSubmap();
+		//testRemoveLeaves();
+		//testRemoveSingleChild();
+		//testRemoveDoubleChild();
+		//randomDelete();
+		testRemove();
 	}
 
 	private static void testSingleRight() {
@@ -450,5 +452,63 @@ public class test {
 		System.out.println("Balanced: " + map.isBalanced());
 
 		System.out.println(map);   	
+    }
+    private static void randomDelete() {
+        System.out.println("Testing Random Deletion");
+        AVLMap<Integer, String> map = new AVLMap();
+        int random = 0;
+        int count = 0;
+        while (count < 500) {
+            random = (int) (Math.random() * 1000 + 1);
+            map.put(random, "");
+            count++;
+        }
+        if (map.isBalanced()) {
+            System.out.println(
+            	count + " elements randomly inserted. Now, randomly deleting elements...");
+        } else {
+            System.out.println("FAILED, elements inserted incorrectly");
+        }
+        while (map.isBalanced() && !map.isEmpty()) {
+            random = (int) (Math.random() * 1000 + 1);
+            map.remove(random);
+            count--;
+        }
+
+        System.out.print("RANDOM DELETION RESULT: ");
+        if (map.isEmpty()) {
+            System.out.println("Success! All elements were successfully removed without creating an imbalanced tree.");
+        } else {
+            System.out.println("Failure. Map became imbalanced before all elements were removed. ");
+            System.out.println("Size = " + map.size());
+            System.out.println("Map is balanced: " + map.isBalanced());
+        }
+    }
+
+    public static void testRemove() {
+
+        System.out.println("Testing Random Deletion");
+        AVLMap<Integer, String> map = new AVLMap();
+        int random = 0;
+        int count = 0;
+
+        while (map.isBalanced() && count < 20) {
+            random = (int) (Math.random() * 20 + 1);
+            map.put(random, "");
+            count++;
+        }
+
+        while (map.isBalanced() && count > 0) {
+            random = (int) (Math.random() * 20 + 1);
+            map.remove(random);
+            count--;        	
+        }
+
+        if (map.isBalanced()) {
+            System.out.println("Passed Random Insert Test: Balnced after 10,000 random entries");
+        } else {
+            System.out.println("FAILED Short Random Delete Test");
+            System.out.println(map + " " + random);
+        }
     }
 }

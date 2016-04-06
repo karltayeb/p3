@@ -112,32 +112,25 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
         	}
         	curr.left = this.rightrotate(curr.left);
             return;
-            //this.updateHeight(curr.left);
         } else if (bfl < -1) {
             if (this.balanceFactor(curr.left.right) == 1) {
                 curr.left.right = this.rightrotate(curr.left.right);
-                //this.updateHeight(curr.left.right);
             }
             curr.left = this.leftrotate(curr.left);
-            //this.updateHeight(curr.left);
             return;            
         }
         if (bfr < -1) {
         	if (this.balanceFactor(curr.right.right) == 1) {
         		curr.right.right = this.rightrotate(curr.right.right);
-        		//this.updateHeight(curr.right.right);
         	}
         	curr.right = this.leftrotate(curr.right);
-        	//this.updateHeight(curr.right);
         	return;
         } else if (bfr > 1) {
             if (this.balanceFactor(curr.right.left) == -1) {
                 curr.right.left = this.leftrotate(curr.right.left);
-                //this.updateHeight(curr.right.left);
             }
             curr.right = this.rightrotate(curr.right);
-            return;
-            //this.updateHeight(curr.right);           
+            return;        
         }
         return;
     }
@@ -146,10 +139,97 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
      * @param key to search and remove from map
      * @return value of entry removed from map
      */
-    @Override()
+    @Override
     public V remove(K key) {
         this.modified = true;
         return this.remove(key, this.root);
+    }
+
+    /** Remove entry with specified key from subtree with given root node.
+     *  @param key the key of the entry to remove, if there
+     *  @param curr the root of the subtree from which to remove the entry
+     *  @return the value associated with the removed key, or null if not found
+     */
+    @Override
+    public V remove(K key, BNode curr) {
+        this.modified = true;
+        if (key == null) {
+            return null;
+        }
+        V temp = this.get(key);
+        if (temp != null) {
+            curr = this.removeroutine(key, curr);
+            this.size--;
+        }
+        if (!this.root.isLeaf()) {
+	        this.root.height = Math.max(this.root.right.height, this.root.left.height) + 1;      
+	        int bf = this.balanceFactor(this.root);        
+	        if (bf > 1) {
+	            if (this.balanceFactor(this.root.left) < 0) {
+	                this.root.left = leftrotate(this.root.left);
+	            }
+	            this.root = this.rightrotate(this.root);
+	        }
+	        if (bf < -1) {
+	            if (this.balanceFactor(this.root.right) > 0) {
+	                this.root.right = this.rightrotate(this.root.right);
+	            }
+	            this.root = this.leftrotate(curr);
+	        }
+        }
+        return temp;
+    }
+
+    private BNode removeroutine(K key, BNode curr) {
+        if (curr.isLeaf()) {
+            return this.leaf;
+        }
+        if (key.compareTo(curr.key) < 0) {
+            curr.left = this.removeroutine(key, curr.left);
+        } else if (key.compareTo(curr.key) > 0) {
+            curr.right = this.removeroutine(key, curr.right);
+        } else {
+            // We found the node we
+            //Catch-all special case for when root is being deleted
+            if (curr == this.root) {
+                this.removeroot();
+                this.size--;
+                return this.root;
+            } else if (curr.right.isLeaf()
+                    && curr.left.equals(this.leaf)) {
+                //Has no children, set this node to leaf
+                return this.leaf;
+            } else if (curr.right.isLeaf()) {
+                return curr.left;
+            } else if (curr.left.isLeaf()) {
+                return curr.right;
+            } else {
+                //There are two children
+                BNode replace = this.find(this.firstKey(curr.right),
+                                                            curr.right);
+                curr.key = replace.key;
+                curr.value = replace.value;
+                curr.right = this.removeroutine(replace.key,
+                                                    curr.right);
+                return curr;
+            }
+        }
+
+        curr.height = Math.max(curr.right.height, curr.left.height) + 1;      
+        int bf = this.balanceFactor(curr);        
+        if (bf > 1) {
+            if (this.balanceFactor(curr.left) < 0) {
+                curr.left = leftrotate(curr.left);
+            }
+            curr = this.rightrotate(curr);
+        }
+        if (bf < -1) {
+            if (this.balanceFactor(curr.right) > 0) {
+                curr.right = this.rightrotate(curr.right);
+            }
+            curr = this.leftrotate(curr);
+        }
+        return curr;
     }
 
     /** Recursively updates the heights of nodes in the tree
