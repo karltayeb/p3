@@ -1,0 +1,23 @@
+Karl Tayeb, Ryan Dens
+ktayeb1, rdens1
+Assignment P3a
+
+Our implementation of AVLMap extends BSTMap. In order to get members from BSTMap, curcially BNode, we changed a number of the private members to protected members. I hope this is not a problem, a number of students asked about this on Piazza but I never saw a clear response endorsing or denying this approach. Additionally we added a height instance variabe in every node. In our implementation sentinels are height 0, so leaf entries in the tree are of height 1. While this doesnt really make sense making sentinels height 1 got rid of null pointer exceptions that popped up.
+
+Insertion:
+In an attempt to avoid using parent pointers the insertion logic is a little roundabout. Instead of checking whether to rotate at a node, it checks if the nodes below it need to be rotated to restore balance. Initially I thought this wouldnt be necessary but we were having trouble reassigning references on the fly and this fixed the problem. Since it is called recursivey it essentially works its way up from the inserted node until it finds the first unbalanced tree at which point there are a number of cases for if it is left heavy or right heavy, and whether that the imbalance is in the right or left parent. These conditions completely determine which rotation routine to carry out. The design of the general insertion rotation does introduce the special case when rotation is happening at the root. In this case the rotation routine does nothing and rotation about the node is taken care of in the put method.
+
+Deletion:
+
+In order to implement remove, we used a similar approach to insertion except since the remove routine method we used in BSTMap recursively returns BNodes instead of being void like our insert helper we did not have to break out the rotations into so many cases. Now we could check if rotation had to happen at that given node which simplified the logic. To the best of our knowledge remove seems to balance trees as items are removed from it. Your test will be the ultimate judge of that.
+
+In order for insertion/deletion to work properly we implemented a not very graceful or efficient updateHeight. I think this is one of the weaknesses of this implementation as adds a good bit of space overhead to carry out insertions.
+
+To test our files we didnt use JUnit but we wrote a bunch of test anyways and tested them in file called test.java. We did not make this checkstyle compliant. What we consider the gold standard for insertion and deletion is our randomInsert and randomDelete tests which randomly generate and remove from a map over many values checking to make sure insertion/deletion was successful and that they can handle repeat insertions, calls to delete keys that aren't in the map etc.
+
+We also tried our best to confirm that all of the public methods in BSTMap carried over without error. It appears to us that they have.
+
+
+
+
+
