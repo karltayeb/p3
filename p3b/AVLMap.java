@@ -193,7 +193,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
             //Catch-all special case for when root is being deleted
             if (curr == this.root) {
                 this.removeroot();
-                this.size--;
+                this.root.right = removeroutine(key, this.root.right);
                 return this.root;
             } else if (curr.right.isLeaf()
                     && curr.left.equals(this.leaf)) {
@@ -211,7 +211,6 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V>{
                 curr.value = replace.value;
                 curr.right = this.removeroutine(replace.key,
                                                     curr.right);
-                return curr;
             }
         }
 

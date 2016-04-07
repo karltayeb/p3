@@ -239,6 +239,10 @@ public class BSTMap<K extends Comparable<? super K>, V>
         }
     }
 
+    public K getRoot() {
+        return this.root.key;
+    }
+
     /** Put <key,value> entry into subtree with given root node.
      *  @param key the key of the entry
      *  @param val the value of the entry

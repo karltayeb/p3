@@ -8,18 +8,19 @@ import java.util.LinkedList;
 
 public class test {
 	public static void main(String[] args){
-		//testSingleRight();
-		//testLeftRight();
-		//testSingleLeft();
-		//testRightLeft();
-		//randomInsert();
-		//testEntriesKeysValues();
-		//testSubmap();
+		testSingleRight();
+		testLeftRight();
+		testSingleLeft();
+		testRightLeft();
+		randomInsert();
+		testEntriesKeysValues();
+		testSubmap();
 		//testRemoveLeaves();
 		//testRemoveSingleChild();
 		//testRemoveDoubleChild();
-		//randomDelete();
+		randomDelete();
 		testRemove();
+		removeAtRoot();
 	}
 
 	private static void testSingleRight() {
@@ -122,7 +123,6 @@ public class test {
 		map.put(1000, "");
 		map.put(2000, "");
 		map.put(3000, "");
-		//map.put(4, "four");
 		System.out.println("Root is " + map.root());
 		System.out.println("Balanced: " + map.isBalanced()+ " BF = " + map.balanceFactor());
 		System.out.println(map);
@@ -498,17 +498,38 @@ public class test {
             count++;
         }
 
-        while (map.isBalanced() && count > 0) {
+        while (map.isBalanced() && !map.isEmpty()) {
             random = (int) (Math.random() * 20 + 1);
             map.remove(random);
-            count--;        	
         }
 
-        if (map.isBalanced()) {
+        if (map.isBalanced() && map.isEmpty()) {
             System.out.println("Passed Random Insert Test: Balnced after 10,000 random entries");
         } else {
             System.out.println("FAILED Short Random Delete Test");
-            System.out.println(map + " " + random);
         }
+    }
+
+    public static void removeAtRoot() {
+        System.out.println("Testing Random Deletion");
+        AVLMap<Integer, String> map = new AVLMap();
+        int random = 0;
+        int count = 0;
+
+        while (map.isBalanced() && count < 1000) {
+            random = (int) (Math.random() * 1000 + 1);
+            map.put(random, "");
+            count++;
+        }
+
+        while (map.isBalanced() && !map.isEmpty()) {
+            map.remove(map.getRoot());
+        }
+
+        if (map.isBalanced() && map.isEmpty()) {
+            System.out.println("Passed remove at root");
+        } else {
+            System.out.println("FAILED remove at root");
+        }    	
     }
 }
