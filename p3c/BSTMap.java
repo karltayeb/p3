@@ -22,7 +22,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
     /** Inner node class.  Do not make this static because you want
         the K to be the same K as in the BSTMap header.
     */
-    protected class BNode extends AbstractMap.SimpleEntry<K, V> {
+    public class BNode extends AbstractMap.SimpleEntry<K, V> {
         /** The key of the entry (null if sentinel node). */
         protected K key;
         /** The value of the entry (null if sentinel node). */
@@ -239,6 +239,10 @@ public class BSTMap<K extends Comparable<? super K>, V>
         }
     }
 
+    public K getRoot() {
+        return this.root.key;
+    }
+
     /** Put <key,value> entry into subtree with given root node.
      *  @param key the key of the entry
      *  @param val the value of the entry
@@ -257,7 +261,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree into which to put the entry
      *  @return the original value associated with the key, or null if not found
      */
-    protected V put(K key, V val, BNode curr) throws IllegalArgumentException {
+    private V put(K key, V val, BNode curr) throws IllegalArgumentException {
         this.modified = true;
         if (key == null || val == null) {
             throw new IllegalArgumentException();
@@ -279,7 +283,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param node the node to insert at
      * @param curr the node of the current subtree
      */
-    protected void insert(BNode node, BNode curr) {
+    private void insert(BNode node, BNode curr) {
         this.modified = true;
         /* If we try to insert on a sentinal, replace the sentinal.
          * since we inspect left and right children, this only happens when
@@ -349,17 +353,15 @@ public class BSTMap<K extends Comparable<? super K>, V>
         V temp = this.get(key);
         if (temp != null) {
             this.removeroutine(key, curr);
-            this.size--;
         }
         return temp;
     }
-    
     /** Helper method for remove that carries out deletion.
      * @param key the key of the entry to remove, if there
      * @param curr the root of the subtree from which to remove the entry
      * @return the node associated with the removed key, or null if not found
      */
-    protected BNode removeroutine(K key, BNode curr) {
+    private BNode removeroutine(K key, BNode curr) {
         if (curr.isLeaf()) {
             return this.leaf;
         }
@@ -395,7 +397,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
     }
 
     /** Helper function to remove root.*/
-    public void removeroot() {
+    protected void removeroot() {
         BNode newroot = this.find(this.firstKey(this.root.right),
                                                     this.root.right);
         if (newroot.isLeaf()) {
@@ -531,7 +533,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the root of the subtree to iterate over
      *  @return an iterable list of entries ordered by keys
      */
-    protected Collection<Map.Entry<K, V>> inOrder(BNode curr) {
+    private Collection<Map.Entry<K, V>> inOrder(BNode curr) {
         LinkedList<Map.Entry<K, V>> ordered = new LinkedList<Map.Entry<K, V>>();
         this.inOrderAddToCollection(curr, ordered);
         return ordered;
@@ -543,7 +545,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      *  @param curr the current root of the subtree
      *  @param collection the collection you are adding nodes to
      */
-    protected void inOrderAddToCollection(BNode curr,
+    private void inOrderAddToCollection(BNode curr,
                 Collection<Map.Entry<K, V>> collection) {
         if (curr.isLeaf()) {
             return;
@@ -583,7 +585,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
      * @param low the min value key we'll allow
      * @param high the max value key we'll allow 
      */
-    protected void addToSubmap(BSTMap<K, V> map, BNode curr, K low, K high) {
+    private void addToSubmap(BSTMap<K, V> map, BNode curr, K low, K high) {
         if (curr.key == null) {
             return;
         }

@@ -1,5 +1,7 @@
 import java.io.Console;
+import java.io.File;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
 
 /* Really simple program to transform a document into a list of words, one per line */
 
@@ -78,7 +80,13 @@ public class DocToWord {
 
 	// Create a console input source
 
-	Scanner cnsl = new Scanner(System.in);
+	Scanner cnsl;
+	try {
+		cnsl = new Scanner(new File(args[0]));
+	} catch (FileNotFoundException e) {
+		System.err.println("Sorry we couldn't find the input file.");
+		return;
+	}
 
 	// Chew through the doc line by line, spitting out the words
 

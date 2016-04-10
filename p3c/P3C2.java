@@ -23,6 +23,21 @@ public class P3C2 {
 		}
 		sc.close();
 
+		// Trim the wordbank to be 100, 1000, or 100000 words.
+		if (wordbank.size() >= 100000){
+			while (wordbank.size() > 100000) {
+				wordbank.removeLast();
+			}
+		} else if (wordbank.size() >= 1000) {
+			while (wordbank.size() > 1000) {
+				wordbank.removeLast();
+			}
+		} else {
+			while (wordbank.size() > 100) {
+				wordbank.removeLast();
+			}			
+		}
+
 		HashMap<String, Integer> hashmap = new HashMap();
 		BSTMap<String, Integer> bst = new BSTMap();
 		AVLMap<String, Integer> avl = new AVLMap();
@@ -74,8 +89,6 @@ public class P3C2 {
 		lEndTime = System.currentTimeMillis();
 		difference = lEndTime - lStartTime;
 		System.out.println("Elapsed milliseconds: " + difference);
-		System.out.println(avl.isBalanced());
-
 
 	}
 }
