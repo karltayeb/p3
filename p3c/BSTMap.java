@@ -11,6 +11,13 @@ import java.util.function.Consumer;
 import java.util.AbstractMap;
 import java.util.ConcurrentModificationException;
 
+/**
+ * Karl Tayeb ktayeb1
+ * Ryan Dens rdens1
+ * Section: 02
+ * Assignment: P3C
+ * Due: 4/11/2016
+ */
 
 /** Binary Search Tree Map implementation with inner Node class.
  *  @param <K> the base type of the keys in the entries

@@ -5,6 +5,14 @@ import java.util.Scanner;
 import java.io.FileNotFoundException;
 
 /**
+ * Karl Tayeb ktayeb1
+ * Ryan Dens rdens1
+ * Section: 02
+ * Assignment: P3C
+ * Due: 4/11/2016
+ */
+
+/**
  * Class solving problem question 1 from part c of project 3.
  * Reads in the file and does the following:
  *      makes it into hashmap, BSTMap, and AVLMap
@@ -107,6 +115,7 @@ public final class P3C2 {
         lEndTime = System.currentTimeMillis();
         difference = lEndTime - lStartTime;
         System.out.println("Elapsed milliseconds: " + difference);
+
     }
 
     /** trims the wordbank to 100, 1000, or 100000 words in length.

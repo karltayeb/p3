@@ -4,6 +4,15 @@ import java.io.File;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 import java.util.Map;
+
+/**
+ * Karl Tayeb ktayeb1
+ * Ryan Dens rdens1
+ * Section: 02
+ * Assignment: P3C
+ * Due: 4/11/2016
+ */
+
 /**
  * Class solving problem question 1 from part c of project 3.
  * Reads in all words from input file, prints out:
@@ -97,7 +106,7 @@ public final class P3C1 {
                 largest = num;
             }
         }
-        System.out.println("The most frequent words are: "
+        System.out.println("\nThe most frequent words are: "
                         + avlcounts.get(largest) 
                         + ", with a frequency of: " + largest);
 
@@ -109,10 +118,11 @@ public final class P3C1 {
                 atmostthree.addAll(temp);
             }
         }
+
+        System.out.println("\nNumber of words that occur at most three times: "
+                        + atmostthree.size());
         System.out.println("The words that occur at most three times are: "
                         + atmostthree);
-        System.out.println("Number of words that occur at most three times: "
-                        + atmostthree.size());
 
         // Top 10% of most frequent words
         LinkedList<String> tenpercent = new LinkedList();
@@ -126,8 +136,9 @@ public final class P3C1 {
                 proportion = (double) tenpercent.size() / uniquewords;
             }
         }
-        System.out.println("The top 10% of words by frequency: " + tenpercent);
-        System.out.println("Number of words in top 10% by frequency: "
+        System.out.println("\nNumber of words in top 10% by frequency: "
                         + tenpercent.size());
+        System.out.println("The top 10% of words by frequency: " + tenpercent);
+
     }
 }

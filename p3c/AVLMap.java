@@ -1,4 +1,10 @@
-
+/**
+ * Karl Tayeb ktayeb1
+ * Ryan Dens rdens1
+ * Section: 02
+ * Assignment: P3C
+ * Due: 4/11/2016
+ */
 
 /**
  * AVL Tree Map implmeentation extended from BSTMap.

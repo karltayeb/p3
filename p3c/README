@@ -1,0 +1,34 @@
+Karl Tayeb ktayeb1
+Ryand Dens rdens1
+Section: 02
+Assignment: P3C
+Due: 4/11/2016
+
+
+P3C1.java:
+
+Takes in the input file (checks if a file is given). We read the input file into a linked list and then iterate across this list to put all of the words in a HashMap. The instructions seemed to specify here that we only need to do this with a map and not all three maps so that's what we did.
+
+Once we had the hashmap we make an AVLMap for the reverse indexing. The AVLMap called avlcounts takes Integers as keys which represent the frequency of words in the document. The stored values are LinkedList<String> which hold the list of words with that occur with the frequency of the key in the document.
+
+We use avlcounts to answer the given questions. Since some of the lists are quite long (words that occur at most three times, and top 10% in frequency words) we took the liberty of also stating the size of these lists and seperating the answers to the questions by some white space so that the answers to different questions are easier to spot while scrolling through. Included in the submission is a file called p3c1sampleOutput.txt which is the output of P3C1 when given the sample input file. We also tested P3C1 on a book about animals. This result is included in p3c1bookOutput.txt
+
+P3C1.java gives one checkstyle error for cyclomatic complexity. That is the one and only checkstyle error in this submission.
+
+
+P3C2.java:
+
+Takes in the input file and feeds the input into a linked list called wordbank. We have a helper method called trim that trims the list to either 100, 1000, or 100000 words as specified.
+
+To be clear, if there are 100,000+ words trim takes the first 100,000 words. If there are 1000-99999 words inclusive trim takes the first 1000 words, if there are 100-999 words, trim takes the first 100 words.
+
+After that we time how long it takes to build a HasMap, BSTMap, and AVLMap from the trimmed wordbank.
+
+The size of the word bank is printed and then the times to build each of the maps is displayed. Although it is not inlcuded here, we also did check to make sure that the AVLMap was balanced after the list was built.
+
+Included in the submission is a file called p3c2sampleOutput.txt which is the result of passing the sample input file provided. We also tested it on a childrens textbook about animals we got from Project Gutenberg. This result is in p3c2bookOutput.txt.
+
+P3C2.java is fully checkstyle compliant.
+
+Included also are MapJHU.java, BSTMap.java, AVLMap.java
+Please note these are exactly the BSTMap and AVLMap submitted in P3B except for some small changes to eliminate cyclomatic complexity and some other small checkstyle errors. In order to use AVLMap, the BNode class, as well as its instance variables are made protected.
