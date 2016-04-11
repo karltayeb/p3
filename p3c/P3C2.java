@@ -15,14 +15,12 @@ public final class P3C2 {
     
     /** Number of words analyzed at max. */
     public static final int MAX_WORDS = 100000;
-    
-    
+
     /** Number of words analyzed at min. */
     public static final int MIN_WORDS = 100;
     
     /** Number of words analyzed at mid. */
     public static final int MID_WORDS = 1000;
-    
     
     /**
      * Private constructor to avoid instantiation of utility class.
@@ -30,8 +28,7 @@ public final class P3C2 {
     private P3C2() {
         
     }
-    
-    
+      
     /**
      * Main method driving the class.
      * Loads in all data, preforms analysis
@@ -57,16 +54,14 @@ public final class P3C2 {
 
         trim(wordbank);
 
-        HashMap<String, Integer> hashmap = new HashMap();
-        BSTMap<String, Integer> bst = new BSTMap();
-        AVLMap<String, Integer> avl = new AVLMap();
-
         // Put the words into the maps
-
+        System.out.println("Wordbank size: " + wordbank.size());
+        
+        // Time build of hashmap        
         System.out.println("Timing HashMap:");
-
         long lStartTime = System.currentTimeMillis();
-
+        
+        HashMap<String, Integer> hashmap = new HashMap();
         for (String word : wordbank) {
             if (!hashmap.containsKey(word)) {
                 hashmap.put(word, 1);
@@ -79,9 +74,11 @@ public final class P3C2 {
         long difference = lEndTime - lStartTime;
         System.out.println("Elapsed milliseconds: " + difference);
 
+        // Time build of BSTMap
         System.out.println("Timing BSTMap:");
         lStartTime = System.currentTimeMillis();
-
+        
+        BSTMap<String, Integer> bst = new BSTMap();
         for (String word : wordbank) {
             if (!bst.hasKey(word)) {
                 bst.put(word, 1);
@@ -94,9 +91,11 @@ public final class P3C2 {
         difference = lEndTime - lStartTime;
         System.out.println("Elapsed milliseconds: " + difference);
 
+        // Time build of AVLMap                
         System.out.println("Timing AVLMap:");
         lStartTime = System.currentTimeMillis();
 
+        AVLMap<String, Integer> avl = new AVLMap();
         for (String word : wordbank) {
             if (!avl.hasKey(word)) {
                 avl.put(word, 1);
@@ -108,8 +107,6 @@ public final class P3C2 {
         lEndTime = System.currentTimeMillis();
         difference = lEndTime - lStartTime;
         System.out.println("Elapsed milliseconds: " + difference);
-        System.out.println(avl.isBalanced());
-
     }
 
     /** trims the wordbank to 100, 1000, or 100000 words in length.
