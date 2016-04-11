@@ -133,12 +133,19 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V> {
                     curr.right.left.height) + 1;
         }
         curr.height = Math.max(curr.right.height, curr.left.height) + 1;
+        this.rotateroutine(curr);
+        return;
+    }
+
+    /** Helper function for rotating after insertions.
+     *  @param curr the node we are looking to rotate below
+     */
+    private void rotateroutine(BNode curr) {
         int bfl = this.balanceFactor(curr.left);
         int bfr = this.balanceFactor(curr.right);
         if (bfl > 1) {
             if (this.balanceFactor(curr.left.left) == -1) {
                 curr.left.left = this.leftrotate(curr.left.left);
-                // this.updateHeight(curr.left.left);
             }
             curr.left = this.rightrotate(curr.left);
             return;
@@ -161,8 +168,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V> {
             }
             curr.right = this.rightrotate(curr.right);
             return;
-        }
-        return;
+        }        
     }
 
     /**
@@ -260,6 +266,14 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V> {
         }
 
         curr.height = Math.max(curr.right.height, curr.left.height) + 1;
+        this.removerotateroutine(curr);
+        return curr;
+    }
+
+    /** Helper function for rotation during removal.
+     *  @param curr the node we are considering rotation on
+     */
+    private void removerotateroutine(BNode curr) {
         int bf = this.balanceFactor(curr);
         if (bf > 1) {
             if (this.balanceFactor(curr.left) < 0) {
@@ -272,8 +286,7 @@ public class AVLMap<K extends Comparable<? super K>, V> extends BSTMap<K, V> {
                 curr.right = this.rightrotate(curr.right);
             }
             curr = this.leftrotate(curr);
-        }
-        return curr;
+        }        
     }
 
     /**

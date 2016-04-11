@@ -31,7 +31,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
         protected BNode left;
         /** The right child of this node. */
         protected BNode right;
-        /** The height of the subtree below this node */
+        /** The height of the subtree below this node. */
         protected int height;
 
         /** Create a new node with a particular key and value.
@@ -45,7 +45,7 @@ public class BSTMap<K extends Comparable<? super K>, V>
             this.left = null;
             this.right = null;
             this.height = 0;
-            if(this.key == null) {
+            if (this.key == null) {
                 this.height = -1;
             }
         }
@@ -239,6 +239,9 @@ public class BSTMap<K extends Comparable<? super K>, V>
         }
     }
 
+    /** Returns the key value of the root.
+     *  @return the key value of the root
+     */
     public K getRoot() {
         return this.root.key;
     }

@@ -55,20 +55,7 @@ public final class P3C2 {
         }
         sc.close();
 
-        // Trim the wordbank to be 100, 1000, or 100000 words.
-        if (wordbank.size() >= this.MAX_WORDS) {
-            while (wordbank.size() > this.MAX_WORDS) {
-                wordbank.removeLast();
-            }
-        } else if (wordbank.size() >= this.MID_WORDS) {
-            while (wordbank.size() > this.MID_WORDS) {
-                wordbank.removeLast();
-            }
-        } else {
-            while (wordbank.size() > this.MIN_WORDS) {
-                wordbank.removeLast();
-            }
-        }
+        trim(wordbank);
 
         HashMap<String, Integer> hashmap = new HashMap();
         BSTMap<String, Integer> bst = new BSTMap();
@@ -121,6 +108,27 @@ public final class P3C2 {
         lEndTime = System.currentTimeMillis();
         difference = lEndTime - lStartTime;
         System.out.println("Elapsed milliseconds: " + difference);
+        System.out.println(avl.isBalanced());
 
+    }
+
+    /** trims the wordbank to 100, 1000, or 100000 words in length.
+     * @param wordbank the original list of words
+     */
+    private static void trim(LinkedList<String> wordbank) {
+        // Trim the wordbank to be 100, 1000, or 100000 words.
+        if (wordbank.size() >= MAX_WORDS) {
+            while (wordbank.size() > MAX_WORDS) {
+                wordbank.removeLast();
+            }
+        } else if (wordbank.size() >= MID_WORDS) {
+            while (wordbank.size() > MID_WORDS) {
+                wordbank.removeLast();
+            }
+        } else {
+            while (wordbank.size() > MIN_WORDS) {
+                wordbank.removeLast();
+            }
+        }
     }
 }

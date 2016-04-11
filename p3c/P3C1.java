@@ -52,8 +52,6 @@ public final class P3C1 {
         sc.close();
 
         HashMap<String, Integer> hash = new HashMap();
-        BSTMap<String, Integer> bst = new BSTMap();
-        AVLMap<String, Integer> avl = new AVLMap();
 
         // Put the words into the maps
         for (String word : wordbank) {
@@ -90,7 +88,7 @@ public final class P3C1 {
         }
         System.out.println("There are " + numwords + " words in the document.");
         System.out.println("There are " + uniquewords
-                + " unique words in the document.");
+                        + " unique words in the document.");
 
         // Most frequent words in the document
         int largest = 0;
@@ -100,25 +98,28 @@ public final class P3C1 {
             }
         }
         System.out.println("The most frequent words are: "
-                + avlcounts.get(largest) + ", with a frequency of: " + largest);
+                        + avlcounts.get(largest) 
+                        + ", with a frequency of: " + largest);
 
         // Words that occur at most three times
         LinkedList<String> atmostthree = new LinkedList();
-        for (int i = 1; i <= this.LEAST_TIMES; i++) {
+        for (int i = 1; i <= LEAST_TIMES; i++) {
             LinkedList<String> temp = avlcounts.get(i);
             if (temp != null) {
                 atmostthree.addAll(temp);
             }
         }
         System.out.println("The words that occur at most three times are: "
-                + atmostthree);
+                        + atmostthree);
+        System.out.println("Number of words that occur at most three times: "
+                        + atmostthree.size());
 
         // Top 10% of most frequent words
         LinkedList<String> tenpercent = new LinkedList();
         tenpercent.addAll(avlcounts.get(largest));
         double proportion = (double) tenpercent.size() / uniquewords;
         int next = largest - 1;
-        while (proportion < this.TOP_PERCENTAGE) {
+        while (proportion < TOP_PERCENTAGE) {
             LinkedList<String> nextlist = avlcounts.get(next--);
             if (nextlist != null) {
                 tenpercent.addAll(nextlist);
@@ -126,6 +127,7 @@ public final class P3C1 {
             }
         }
         System.out.println("The top 10% of words by frequency: " + tenpercent);
-
+        System.out.println("Number of words in top 10% by frequency: "
+                        + tenpercent.size());
     }
 }
